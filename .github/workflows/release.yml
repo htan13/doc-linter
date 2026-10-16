@@ -1,15 +1,22 @@
-# Publishes the Optimizely Vale package. Every merge to main that changes Optimizely/
-# builds Optimizely.zip and attaches it to a new release. Documentation repositories
-# install it from https://github.com/htan13/doc-linter/releases/latest/download/Optimizely.zip
+# Publishes the Optimizely Vale package. Every merge to main builds Optimizely.zip and
+# attaches it to a new release. Documentation repositories install it from
+# https://github.com/htan13/doc-linter/releases/latest/download/Optimizely.zip
 name: Release package
 on:
   push:
     branches: [main]
-    paths:
-      - "Optimizely/**"
+  # Optional: rebuild the latest release without a new merge.
   workflow_dispatch:
+# Grants the workflow's GITHUB_TOKEN write access to repository contents, which
+# `gh release create` needs. This overrides the repository's default workflow
+# permissions, so the Actions settings can stay read-only.
 permissions:
   contents: write
+# Publish one release at a time, in merge order, so the newest merge is always
+# the release marked latest.
+concurrency:
+  group: release-package
+  cancel-in-progress: false
 jobs:
   release:
     runs-on: ubuntu-latest

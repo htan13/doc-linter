@@ -37,9 +37,9 @@ Promptless never promotes an `Observed` rule to `StyleGuide`. To make an observe
 
 ## Release the package
 
-The **Release package** workflow runs on every merge to `main` that changes `Optimizely/`. It runs the tests, builds `Optimizely.zip` with a top-level `Optimizely/` directory, and attaches it to a release tagged `vYYYY.MM.DD-RUN`. Documentation repositories install `releases/latest/download/Optimizely.zip`, so they pick up the latest release on their next `vale sync`. To pin a repository to one release, replace `latest/download` with `download/TAG` in its `.vale.ini`.
+The **Release package** workflow runs on every merge to `main`. It runs the tests, builds `Optimizely.zip` with a top-level `Optimizely/` directory, and attaches it to a release tagged `vYYYY.MM.DD-RUN`. Documentation repositories install `releases/latest/download/Optimizely.zip`, so they pick up the latest release on their next `vale sync`. To pin a repository to one release, replace `latest/download` with `download/TAG` in its `.vale.ini`.
 
-The workflow needs **Settings** > **Actions** > **General** > **Workflow permissions** set to **Read and write permissions**, so it can create releases.
+The workflow grants itself the `contents: write` permission it needs to create releases, so the repository's Actions settings need no change. The merge that adds this workflow to `main` publishes the first release. If the tests fail, the workflow publishes no release, and `releases/latest` keeps pointing at the previous one. To rebuild the package without a new merge, run the **Release package** workflow from the **Actions** tab.
 
 ## Requirements
 

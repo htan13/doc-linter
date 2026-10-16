@@ -1,0 +1,30 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:308-320 "Code font for technical elements"
+#   (file paths, file names, filename extensions; Bad: "Go to users/config.html.").
+# Vale skips code spans, so any file name or extension left in prose is unformatted.
+# Product names that end in .js or .NET (Next.js, Node.js, ASP.NET) are not file names.
+extends: existence
+message: "Put the file name or path '%s' in code font (backticks)."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#format-code
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+nonword: true
+tokens:
+  - '(?<![\w@/.-])(?:[\w-]+/)*[\w-]+\.(?:json|jsonc|js|mjs|cjs|jsx|ts|tsx|cs|cshtml|razor|csproj|sln|config|xml|xsd|html?|aspx|ascx|ashx|yml|yaml|toml|ini|env|md|mdx|txt|csv|tsv|log|css|scss|less|sql|sh|ps1|psm1|bat|cmd|py|rb|php|java|kt|swift|go|dll|exe|nupkg|zip|tar|gz|tgz|pem|crt|cer|pfx|key|lock|map|wasm|graphql|gql|liquid|hbs|vue|svelte|dockerfile|editorconfig|gitignore)(?![\w-])'
+  - '(?<![\w`])\.(?:json|js|ts|cs|cshtml|config|xml|html|yml|yaml|csv|css|dll|zip|env|mdx?)\b(?! ?(?:NET|Core|js))'
+exceptions:
+  - '(?i)^(?:next|node|vue|nuxt|react|express|angular|ember|backbone|three|chart|d3|moment|socket\.io|alpine|svelte|deno|bun)\.js$'
+  - '^ASP\.NET'
+  - '^\.NET'
+tests:
+  - name: fires
+    input: |
+      Go to users/config.html. Edit appsettings.json and the .config file.
+    want: |
+      1:7:StyleGuide.CodeFontFiles:Put the file name or path 'users/config.html' in code font (backticks).
+      1:31:StyleGuide.CodeFontFiles:Put the file name or path 'appsettings.json' in code font (backticks).
+      1:56:StyleGuide.CodeFontFiles:Put the file name or path '.config' in code font (backticks).
+  - name: clean
+    input: |
+      Go to `users/config.html`. Edit `appsettings.json`. Build the site with Next.js on .NET 8 and ASP.NET Core.
+    want: ""

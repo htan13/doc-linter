@@ -1,0 +1,28 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:691-693 "Callout overuse" ("Flag articles with more than three callouts").
+# Counts Archbee <hint> components, GitHub-style alerts, and ::: admonitions per page.
+extends: occurrence
+message: "This article has %d callouts. Use no more than three, and only for critical information."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#use-callouts
+level: warning
+scope: raw
+max: 3
+token: '(?m)(?:<hint\b|<Callout\b|<Admonition\b|<Note\b|<Warning\b|<Tip\b|^[ \t]*> \[!(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]|^[ \t]*:::(?:note|tip|info|warning|danger|caution|important|hint))'
+tests:
+  - name: fires
+    input: |
+      <hint type="info">One.</hint>
+
+      <hint type="info">Two.</hint>
+
+      <hint type="info">Three.</hint>
+
+      <hint type="warning">Four.</hint>
+    want: |
+      1:1:StyleGuide.CalloutCount:This article has 4 callouts. Use no more than three, and only for critical information.
+  - name: clean
+    input: |
+      <hint type="info">One.</hint>
+
+      <hint type="warning">Two.</hint>
+    want: ""

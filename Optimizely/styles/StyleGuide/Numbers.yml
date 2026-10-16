@@ -1,0 +1,23 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:408-418 "Spell out numbers one through nine"
+#   (exception: step numbers always use numerals).
+# Excepted: step numbers (the stated exception), digits that are part of a larger number, decimal,
+# identifier, or path, and digits inside a math expression (markup artifacts).
+extends: existence
+message: "Spell out '%s' as a word (one through nine). Use numerals for 10 and above and for step numbers."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-numbers
+level: warning
+scope: sentence & ~table & ~heading
+nonword: true
+tokens:
+  - '(?<![\w.,:/#$€£+\-–×\\=*<>])(?<!(?i:steps?) (?:\d+(?:,? (?:and|or|to|through) |[-–]))?)[1-9](?![\w.,:/\-–+*=<>])'
+tests:
+  - name: fires
+    input: |
+      Select 3 items from the list.
+    want: |
+      1:8:StyleGuide.Numbers:Spell out '3' as a word (one through nine). Use numerals for 10 and above and for step numbers.
+  - name: clean
+    input: |
+      Select three items. Return to step 3. Set the width to 5px. Select 12 items. Repeat steps 2 and 3.
+    want: ""

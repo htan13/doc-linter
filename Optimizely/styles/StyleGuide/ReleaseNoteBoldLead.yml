@@ -1,0 +1,24 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-rn-review/SKILL.md:112-116 ("Do not bold the leading phrase or sentence of a bullet";
+#   the named-feature pattern '**Feature name** – Explanation' is the single exception) and check E3.
+# Applies to release notes only. The package .vale.ini turns the ReleaseNote* rules off, and each
+# *-release-notes repository turns them back on (see templates/release-notes.vale.ini).
+extends: existence
+message: "Do not bold the leading phrase of a release-note bullet. Bold only UI element names, or use the named-feature pattern '**Feature name** – Explanation.'"
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^[ \t]*[-*][ \t]+(?:\([A-Z][A-Z0-9]+-\d+\)[ \t]+–[ \t]+)?(?:\(Beta\)[ \t]+)?\*\*[^*\n]+\*\*(?![ \t]+–)'
+tests:
+  - name: fires
+    input: |
+      - **Improved the Add to List dialog** so the **Schedule an email reminder** checkbox respects the setting.
+    want: |
+      1:1:StyleGuide.ReleaseNoteBoldLead:Do not bold the leading phrase of a release-note bullet. Bold only UI element names, or use the named-feature pattern '**Feature name** – Explanation.'
+  - name: clean
+    input: |
+      - Improved the **Add to List** dialog so the **Schedule an email reminder** checkbox respects the setting.
+      - **Visual Builder** – Released a drag-and-drop editor for experiences.
+    want: ""

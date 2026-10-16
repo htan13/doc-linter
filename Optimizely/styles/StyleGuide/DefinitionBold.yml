@@ -1,0 +1,25 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:551-559 "Define lists of fields or values with en dashes"
+#   (Bad: "Name: Enter your name in the text field." Good: "**Name** – Enter your name ...").
+# Flags a list entry that opens with a short plain term followed by a colon or en dash.
+extends: existence
+message: "Bold the term at the start of a definition entry and offset the definition with an en dash: '**Term** – Definition.'"
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-lists
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^[ \t]*[-*+][ \t]+(?!(?:Optional|Note|Important|Tip|Example|Warning|Caution)\b)[A-Z][\w-]*(?: [\w-]+){0,4}(?=[ \t]*(?::[ \t]+[A-Z]|[ \t]–[ \t]))'
+tests:
+  - name: fires
+    input: |
+      - Name: Enter your name in the text field.
+      - Identify key drivers: Uncover which events matter.
+    want: |
+      1:1:StyleGuide.DefinitionBold:Bold the term at the start of a definition entry and offset the definition with an en dash: '**Term** – Definition.'
+      2:1:StyleGuide.DefinitionBold:Bold the term at the start of a definition entry and offset the definition with an en dash: '**Term** – Definition.'
+  - name: clean
+    input: |
+      - **Name** – Enter your name in the text field.
+      - **Identify key drivers** – Uncover which events matter.
+    want: ""

@@ -1,0 +1,53 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:434-453 "Abbreviations must be spelled out on first use",
+#   with the stated exception list (UI, API, CLI, AI, B2B, B2C, URL, SKU, ID, SDK, REST).
+# Inherits Std.Abbreviations.Acronyms (conditional: a definition "Full Term (ABC)" must come first).
+# The source lists exceptions, so warning.
+# Supersedes Std.Abbreviations.Acronyms (dimension: acronym-expansion).
+extends: Std.Abbreviations.Acronyms
+message: "Spell out '%s' on first use, with the abbreviation in parentheses, for example 'Optimizely Data Platform (ODP)'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#abbreviations-and-symbols
+level: warning
+scope: text & ~frontmatter & ~heading
+first: '\b([A-Z][A-Z0-9]{1,5}s?)\b'
+second: '(?:\b[A-Za-z][\w-]*[ -])+\(([A-Z][A-Z0-9]{1,5}s?)\)'
+exceptions:
+  - UI
+  - API
+  - APIs
+  - CLI
+  - AI
+  - B2B
+  - B2C
+  - URL
+  - URLs
+  - SKU
+  - SKUs
+  - ID
+  - IDs
+  - SDK
+  - SDKs
+  - REST
+  - CMS
+  - FAQ
+  - FAQs
+  - OK
+  - US
+  - UK
+  - EU
+  - TODO
+  - NET
+  - ASP
+tests:
+  - name: fires
+    input: |
+      The ODP JavaScript tag lets you track visitors. Use ODP to target audiences.
+    want: |
+      1:5:StyleGuide.Acronyms:Spell out 'ODP' on first use, with the abbreviation in parentheses, for example 'Optimizely Data Platform (ODP)'.
+      1:53:StyleGuide.Acronyms:Spell out 'ODP' on first use, with the abbreviation in parentheses, for example 'Optimizely Data Platform (ODP)'.
+  - name: clean
+    input: |
+      The Optimizely Data Platform (ODP) JavaScript tag lets you track visitors.
+
+      Use ODP to target audiences through the API and the SDK.
+    want: ""

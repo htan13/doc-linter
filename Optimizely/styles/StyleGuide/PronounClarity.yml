@@ -1,0 +1,21 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:727-729 "Pronoun clarity"
+#   ("Flag pronouns (it, this, that, they) that could be ambiguous").
+# Flags a sentence that opens with a bare demonstrative or "It" followed by a verb.
+extends: existence
+message: "Name the noun that '%s' refers to (for example, 'This setting is ...')."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#voice-and-tone
+level: warning
+scope: sentence
+tokens:
+  - '^(?:This|That|These|Those|It) (?:is|are|was|were|means|allows|lets|makes|causes|ensures|requires|helps|enables|will|can|may|might|has|have|does|happens|depends|works)\b'
+tests:
+  - name: fires
+    input: |
+      Restart the server. This ensures the cache clears.
+    want: |
+      1:21:StyleGuide.PronounClarity:Name the noun that 'This ensures' refers to (for example, 'This setting is ...').
+  - name: clean
+    input: |
+      Restart the server. The restart clears the cache.
+    want: ""

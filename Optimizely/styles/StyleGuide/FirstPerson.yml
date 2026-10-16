@@ -1,0 +1,27 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:457-462 "No first person"
+#   (exception: FAQ questions). Vale cannot tell an FAQ question apart, so warning.
+# Supersedes Std.Usage.FirstPersonPlural and Std.Usage.FirstPersonSingular (dimension: first-person).
+extends: existence
+message: "Avoid first person ('%s'). Use 'you' for instructions, or 'Optimizely' for the company."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#voice-and-tone
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+tokens:
+  - '\b(?:[Ww]e|[Uu]s|[Oo]ur|[Oo]urs|[Oo]urselves|[Ww]e[’'']re|[Ww]e[’'']ve|[Ww]e[’'']ll|[Ww]e[’'']d)\b'
+  - '\b(?:I|[Mm]e|[Mm]y|[Mm]ine|[Mm]yself)\b(?![/.-])'
+exceptions:
+  - '^US$'
+  - '^I/O$'
+tests:
+  - name: fires
+    input: |
+      We designed this feature to help our customers.
+    want: |
+      1:1:StyleGuide.FirstPerson:Avoid first person ('We'). Use 'you' for instructions, or 'Optimizely' for the company.
+      1:34:StyleGuide.FirstPerson:Avoid first person ('our'). Use 'you' for instructions, or 'Optimizely' for the company.
+  - name: clean
+    input: |
+      This feature helps you accomplish your goals. Optimizely hosts data in the US.
+    want: ""

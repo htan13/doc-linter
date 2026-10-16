@@ -1,0 +1,30 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:475-481 "Use versioned CMS product names" and
+#   :572-573 "Use correct Product names" ("CMS (SaaS)" not "CMS SaaS" or "SaaS CMS";
+#   "CMS (PaaS)" not "CMS PaaS" or "PaaS CMS").
+extends: substitution
+message: "Use %s instead of '%s'. Name the specific version (CMS 11, CMS 12, or CMS 13) when the context is one version."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#product-names
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+action:
+  name: replace
+swap:
+  '\bCMS PaaS\b': CMS (PaaS)|CMS 12|CMS 13
+  '\bPaaS CMS\b': CMS (PaaS)|CMS 12|CMS 13
+  '\bCMS SaaS\b': CMS (SaaS)
+  '\bSaaS CMS\b': CMS (SaaS)
+  '\bCMS-SaaS\b': CMS (SaaS)
+  '\bCMS-PaaS\b': CMS (PaaS)
+tests:
+  - name: fires
+    input: |
+      This feature is available in CMS PaaS and SaaS CMS.
+    want: |
+      1:30:StyleGuide.CmsVersionedNames:Use 'CMS (PaaS)', 'CMS 12', or 'CMS 13' instead of 'CMS PaaS'. Name the specific version (CMS 11, CMS 12, or CMS 13) when the context is one version.
+      1:43:StyleGuide.CmsVersionedNames:Use 'CMS (SaaS)' instead of 'SaaS CMS'. Name the specific version (CMS 11, CMS 12, or CMS 13) when the context is one version.
+  - name: clean
+    input: |
+      This feature is available in CMS 13 and CMS (SaaS).
+    want: ""

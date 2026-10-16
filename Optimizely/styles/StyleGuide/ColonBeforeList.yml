@@ -1,0 +1,28 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:542-547 "Colons before lists must follow a complete sentence"
+#   (Bad: "The features include:"; Good: "The product includes the following features:").
+# Flags a lead-in that ends in a verb or preposition with no object right before a list.
+extends: existence
+message: "The text before the colon must be a complete sentence. Name what follows, for example 'includes the following features:'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-lists
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^[^\n#|]*\b(?:include|includes|including|are|is|were|was|contain|contains|containing|such as|like|for example|consist of|consists of|comprise|comprises|be|to|of|for|with|from|by|the|a|an|and|or|either|any|are as follows)\s*:\s*\n(?:[ \t]*\n)?[ \t]*(?:[-*+]|\d+[.)])[ \t]'
+tests:
+  - name: fires
+    input: |
+      The features include:
+
+      - Flags
+      - Rules
+    want: |
+      1:1:StyleGuide.ColonBeforeList:The text before the colon must be a complete sentence. Name what follows, for example 'includes the following features:'.
+  - name: clean
+    input: |
+      The product includes the following features:
+
+      - Flags
+      - Rules
+    want: ""

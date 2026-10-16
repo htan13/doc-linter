@@ -1,0 +1,24 @@
+# Rung: Stated, conditional (StyleGuide/warning). "Avoid using ellipses '...' and vertical ellipses. Use the tooltip name
+#   or **More Options**". Inherits Std.Punctuation.Ellipses for its pattern where it applies.
+# Source: copilot-instructions.md, the agent-instruction file that 26 of the 27 Optimizely doc repositories carry with
+#   identical content (.github/copilot-instructions.md; episerver/cms-13-docs at its root, commit 6dab204).
+extends: existence
+message: "Avoid ellipses ('%s'). Name the control by its tooltip, or use **More options**."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#ui-elements
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+nonword: true
+tokens:
+  - '\.\.\.'
+  - '…'
+  - '⋮'
+tests:
+  - name: fires
+    input: |
+      Click ... to open the menu.
+    want: |
+      1:7:StyleGuide.Ellipses:Avoid ellipses ('...'). Name the control by its tooltip, or use **More options**.
+  - name: clean
+    input: |
+      Click **More options** to open the menu.
+    want: ""

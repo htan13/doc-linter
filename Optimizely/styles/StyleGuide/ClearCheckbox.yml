@@ -1,0 +1,24 @@
+# Rung: Stated, unconditional (StyleGuide/error). "Always use 'clear the checkbox'. Do not use deselect or remove."
+# Source: copilot-instructions.md, the agent-instruction file that 26 of the 27 Optimizely doc repositories carry with
+#   identical content (.github/copilot-instructions.md; episerver/cms-13-docs at its root, commit 6dab204).
+extends: substitution
+message: "Use %s instead of '%s' for a checkbox."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#ui-elements
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+action:
+  name: replace
+swap:
+  '\b(?:deselect|de-select|uncheck|un-check|untick)\b': clear
+  '\bremove the (?:check|checkmark|tick) (?:from|in)\b': clear
+tests:
+  - name: fires
+    input: |
+      Deselect the **Publish** checkbox.
+    want: |
+      1:1:StyleGuide.ClearCheckbox:Use 'clear' instead of 'Deselect' for a checkbox.
+  - name: clean
+    input: |
+      Clear the **Publish** checkbox.
+    want: ""

@@ -1,0 +1,27 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-rn-review/SKILL.md:132 ("The preferred pattern is 'Fixed the issue where [subject] [verb]...'.
+#   Avoid embedding the subject directly after 'Fixed the'"). "Preferred" is hedged, so warning.
+# Applies to release notes only. The package .vale.ini turns the ReleaseNote* rules off, and each
+# *-release-notes repository turns them back on (see templates/release-notes.vale.ini).
+extends: existence
+message: "Start the bug fix with 'Fixed the issue where [subject] [verb]', not '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+tokens:
+  - 'Fixed (?:a|an|the) (?:bug|problem|defect|error)\b'
+  - 'Fixed an? issue\b'
+  - 'Fixed the issue\b(?! where)'
+  - 'Fixed the (?!(?:issue|bug|problem|defect|error)\b)(?:[A-Za-z][\w-]*\s){1,3}?(?:that|which|when)\b'
+tests:
+  - name: fires
+    input: |
+      Fixed a bug where search failed. Fixed the CMS search that returned no results.
+    want: |
+      1:1:StyleGuide.ReleaseNoteFixOpener:Start the bug fix with 'Fixed the issue where [subject] [verb]', not 'Fixed a bug'.
+      1:34:StyleGuide.ReleaseNoteFixOpener:Start the bug fix with 'Fixed the issue where [subject] [verb]', not 'Fixed the CMS search that'.
+  - name: clean
+    input: |
+      Fixed the issue where CMS Edit mode search returned no results on sites with many enabled locales.
+    want: ""

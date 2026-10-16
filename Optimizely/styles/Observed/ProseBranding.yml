@@ -1,0 +1,23 @@
+# Rung: Observed (Observed/suggestion). Enabled only in episerver/cms-13-docs.
+# Source: collection_analyses/episerver_cms_13_docs_e4d84dbb/style-observations.md (Promptless Knowledge Base).
+#   "EPiServer" appears in code identifiers, namespaces, NuGet IDs, and config keys, while prose
+#   branding is "Optimizely" or "CMS": 9 of 10 sampled pages. Code is not linted, so this fires on prose only.
+extends: existence
+message: "Observed convention (9 of 10 sampled pages): prose uses 'Optimizely' or 'CMS', not '%s'. Keep EPiServer to code identifiers."
+level: suggestion
+vocab: false
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+tokens:
+  - Episerver
+  - EPiServer
+tests:
+  - name: fires
+    input: |
+      Episerver stores content in the database.
+    want: |
+      1:1:Observed.ProseBranding:Observed convention (9 of 10 sampled pages): prose uses 'Optimizely' or 'CMS', not 'Episerver'. Keep EPiServer to code identifiers.
+  - name: clean
+    input: |
+      Optimizely CMS stores content in the database. Install `EPiServer.CMS.Core`.
+    want: ""

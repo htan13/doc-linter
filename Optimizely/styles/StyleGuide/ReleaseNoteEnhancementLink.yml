@@ -1,0 +1,24 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-rn-review/SKILL.md:117 ("Include link to relevant documentation for all enhancements or
+#   feature release notes. Identify if a release note seems like it should link ... but does not") and check E4.
+#   The "seems like it should" clause is a judgment, so warning.
+# Applies to release notes only. The package .vale.ini turns the ReleaseNote* rules off, and each
+# *-release-notes repository turns them back on (see templates/release-notes.vale.ini).
+extends: existence
+message: "Link this enhancement to the documentation that explains it."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^[ \t]*(?:[-*][ \t]+)?(?:\([A-Z][A-Z0-9]+-\d+\)[ \t]+–[ \t]+)?(?:\(Beta\)[ \t]+)?(?:Added|Released|Improved|Introduced|Launched|Extended|Increased|Enhanced|Expanded|Updated|Upgraded|Implemented|Created|Enabled|Redesigned)\b(?![^\n]*(?:\]\(|:Link\[))[^\n]*\S'
+tests:
+  - name: fires
+    input: |
+      - Added ratio metrics for A/B tests, which let you divide one event by another.
+    want: |
+      1:1:StyleGuide.ReleaseNoteEnhancementLink:Link this enhancement to the documentation that explains it.
+  - name: clean
+    input: |
+      - Added ratio metrics for A/B tests, which let you divide one event by another. See [Create a ratio metric](https://example.com).
+    want: ""

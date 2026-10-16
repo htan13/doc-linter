@@ -1,0 +1,27 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:380-381 "Correct vocabulary terms"
+#   ("log in" (verb), "login" (noun); "set up" (verb), "setup" (noun)).
+# Flags the one-word noun used where a verb is required: after "to" or a modal, before
+# "to"/"with" (log in to), and before an article or pronoun object (set up the ...).
+extends: existence
+message: "'%s' uses the noun as a verb. Write 'log in' or 'set up' (two words) for the verb."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#word-list
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+tokens:
+  - '(?:to|can|cannot|must|should|will|then|please|you|users?) (?:login|setup)\b'
+  - '\blogin (?:to|with|using|as)\b'
+  - '\bsetup (?:the|a|an|your|their|our|this|that|these|those|it|them|Optimizely|CMS)\b'
+  - '^(?:Login|Setup) (?:to|the|a|an|your)\b'
+tests:
+  - name: fires
+    input: |
+      Login to the CMS. You must setup the integration.
+    want: |
+      1:1:StyleGuide.VerbNounPairs:'Login to' uses the noun as a verb. Write 'log in' or 'set up' (two words) for the verb.
+      1:23:StyleGuide.VerbNounPairs:'must setup' uses the noun as a verb. Write 'log in' or 'set up' (two words) for the verb.
+  - name: clean
+    input: |
+      Log in to the CMS. Set up the integration. The login page and the setup wizard open.
+    want: ""

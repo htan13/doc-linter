@@ -1,0 +1,26 @@
+# Rung: Stated, conditional (StyleGuide/warning). "Replace 'must have been' with 'must be' (contextual)" and
+#   "Replace 'Optimizely recommends' with 'you should'". "Contextual" makes it a warning.
+# Source: copilot-instructions.md, the agent-instruction file that 26 of the 27 Optimizely doc repositories carry with
+#   identical content (.github/copilot-instructions.md; episerver/cms-13-docs at its root, commit 6dab204).
+extends: substitution
+message: "Use %s instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#concise-writing
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+action:
+  name: replace
+swap:
+  '\bmust have been\b': must be
+  '\bOptimizely recommends\b': you should
+tests:
+  - name: fires
+    input: |
+      The content must have been published. Optimizely recommends that you cache pages.
+    want: |
+      1:13:StyleGuide.WordyPhrasesCms:Use 'must be' instead of 'must have been'.
+      1:39:StyleGuide.WordyPhrasesCms:Use 'you should' instead of 'Optimizely recommends'.
+  - name: clean
+    input: |
+      The content must be published. Cache pages.
+    want: ""

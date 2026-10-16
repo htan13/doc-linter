@@ -1,0 +1,62 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:500-502 "Heading hierarchy"
+#   ("Do not use H1 within articles ... Do not skip heading levels") and :805-807
+#   "Heading hierarchy reflects content structure".
+# A script, because a level skip depends on the previous heading. Fenced code is skipped,
+# so a shell comment that starts with '#' is not read as a heading. "Avoid H4" is hedged
+# and is the separate StyleGuide.HeadingH4 warning.
+extends: script
+message: "Fix the heading hierarchy: do not use H1 in the article body (the title is H1), and do not skip a level."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-headings
+level: error
+scope: raw
+script: |
+  text := import("text")
+  matches := []
+  fence := ""
+  prev := 1
+  offset := 0
+  front := false
+  lines := text.split(scope, "\n")
+  for i, line in lines {
+    trimmed := text.trim_space(line)
+    if i == 0 && trimmed == "---" {
+      front = true
+    } else if front {
+      if trimmed == "---" { front = false }
+    } else if fence != "" {
+      if text.has_prefix(trimmed, fence) { fence = "" }
+    } else if text.has_prefix(trimmed, "```") {
+      fence = "```"
+    } else if text.has_prefix(trimmed, "~~~") {
+      fence = "~~~"
+    } else if text.re_match(`^#{1,6} \S`, line) {
+      level := len(text.re_find(`^#+`, line)[0][0].text)
+      if level == 1 || level > prev + 1 {
+        matches = append(matches, {begin: offset, end: offset + len(line)})
+      }
+      prev = level
+    }
+    offset += len(line) + 1
+  }
+tests:
+  - name: fires
+    input: |
+      # Article title
+
+      ## Configure the cache
+
+      #### Set the timeout
+    want: |
+      1:1:StyleGuide.HeadingLevels:Fix the heading hierarchy: do not use H1 in the article body (the title is H1), and do not skip a level.
+      5:1:StyleGuide.HeadingLevels:Fix the heading hierarchy: do not use H1 in the article body (the title is H1), and do not skip a level.
+  - name: clean
+    input: |
+      ## Configure the cache
+
+      ```bash
+      # Install the package
+      ```
+
+      ### Set the timeout
+    want: ""

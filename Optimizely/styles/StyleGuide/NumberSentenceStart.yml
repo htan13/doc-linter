@@ -1,0 +1,21 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:410 "Spell out numbers one through nine"
+#   ("Spell out any number that starts a sentence (except calendar years)").
+extends: existence
+message: "Spell out '%s' at the start of a sentence, or rephrase so the sentence does not start with a number."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-numbers
+level: warning
+scope: sentence & ~table & ~heading & ~list
+nonword: true
+tokens:
+  - '^\d+(?:,\d{3})*(?![\d.:/\-–])(?<!^(?:1[5-9]|20)\d\d)\b'
+tests:
+  - name: fires
+    input: |
+      Configure the cache. 25 users can sign in at once.
+    want: |
+      1:22:StyleGuide.NumberSentenceStart:Spell out '25' at the start of a sentence, or rephrase so the sentence does not start with a number.
+  - name: clean
+    input: |
+      Configure the cache. Twenty-five users can sign in at once. 2026 brought several changes.
+    want: ""

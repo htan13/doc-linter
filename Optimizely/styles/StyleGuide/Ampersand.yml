@@ -1,0 +1,22 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:403 "Forbidden abbreviations and symbols"
+#   ("&" -> use "and"; exception: the product name Search & Navigation).
+# The one stated exception is expressible, so the rule stays unconditional.
+extends: existence
+message: "Use 'and' instead of '&' (the product name Search & Navigation is the only exception)."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#abbreviations-and-symbols
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+nonword: true
+tokens:
+  - '(?<!Search )&(?! Navigation)(?![#a-zA-Z0-9]+;)'
+tests:
+  - name: fires
+    input: |
+      Create & edit content.
+    want: |
+      1:8:StyleGuide.Ampersand:Use 'and' instead of '&' (the product name Search & Navigation is the only exception).
+  - name: clean
+    input: |
+      Create and edit content in Search & Navigation.
+    want: ""

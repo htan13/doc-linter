@@ -1,0 +1,25 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:706-708 "Dashes and hyphens"
+#   (em dash for pauses, en dash for ranges and term definitions, hyphen only for compound adjectives).
+# Supersedes Moose.EmDash (dimension: em-dash): the source allows em dashes for pauses.
+extends: existence
+message: "Use an em dash (—) for a pause or an en dash (–) for a range or definition, not '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#use-punctuation
+level: warning
+scope: sentence & ~heading
+nonword: true
+tokens:
+  - '(?<=\w) - (?=\w)'
+  - '(?<=\w) ?-- ?(?=\w)'
+  - '(?<![\w.:/-])(?:\d{1,4}|[1-9]\d{0,2}(?:,\d{3})+)-(?:\d{1,4}|[1-9]\d{0,2}(?:,\d{3})+)(?![\w.:/-])(?<!\b(?:19|20)\d\d-\d\d)'
+tests:
+  - name: fires
+    input: |
+      The job runs nightly - it takes 10-15 minutes.
+    want: |
+      1:21:StyleGuide.Dashes:Use an em dash (—) for a pause or an en dash (–) for a range or definition, not ' - '.
+      1:33:StyleGuide.Dashes:Use an em dash (—) for a pause or an en dash (–) for a range or definition, not '10-15'.
+  - name: clean
+    input: |
+      The job runs nightly — it takes 10–15 minutes. Use a well-known key.
+    want: ""

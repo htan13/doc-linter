@@ -1,0 +1,21 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:515-517 "Do not use gifs".
+extends: existence
+message: "Do not use GIFs in documentation. Use a static screenshot or a numbered procedure."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#add-images
+level: error
+scope: raw
+nonword: true
+ignorecase: true
+tokens:
+  - '(?:!\[[^\]]*\]\(|<(?:img|Image)\b[^>]*\bsrc=["''])[^)"''\s]+\.gif(?:\?[^)"''\s]*)?'
+tests:
+  - name: fires
+    input: |
+      ![Animation of the editor where a block is dragged](https://example.com/drag.gif)
+    want: |
+      1:1:StyleGuide.NoGifs:Do not use GIFs in documentation. Use a static screenshot or a numbered procedure.
+  - name: clean
+    input: |
+      ![Screenshot of the editor where a block is selected](https://example.com/drag.png)
+    want: ""

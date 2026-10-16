@@ -1,0 +1,66 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:251-256 "No gerunds in headings".
+# Flags an -ing word at the start of a heading or after a colon. exceptions hold only -ing
+# words that are plain nouns, not verbs or gerunds (Settings, String, Warning), plus the business
+# fields Pricing, Billing, Marketing, Advertising, and Engineering. Participial adjectives that modify
+# the following noun ("Breaking changes", "Existing content", "Upcoming releases") are not verbs and
+# are allowed; the same word used as a verb with an object ("Breaking the cache") is flagged.
+# Gerund nouns such as "Monitoring" or "Formatting" are violations.
+extends: existence
+message: "Do not use the gerund '%s' in a heading. Use the imperative (for example, 'Configure' not 'Configuring')."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-headings
+level: error
+scope: [heading, title]
+tokens:
+  - '(?:^|(?<=: ))(?!(?i:breaking|overlapping|pending|upcoming|existing|missing|remaining|following|incoming|outgoing|trending) (?!(?:the|a|an|your|my|our|their|this|that|these|those|it|them|to|from|into|with|for|by|in|on)\b)\w)[A-Z]?[a-z]+ing\b'
+exceptions:
+  - Settings
+  - Setting
+  - String
+  - Strings
+  - Thing
+  - Things
+  - Something
+  - Nothing
+  - Everything
+  - Ring
+  - Spring
+  - King
+  - Wing
+  - Sting
+  - Swing
+  - Sling
+  - Ceiling
+  - Morning
+  - Heading
+  - Headings
+  - Warning
+  - Warnings
+  - Meeting
+  - Pricing
+  - Billing
+  - Marketing
+  - Advertising
+  - Engineering
+tests:
+  - name: fires
+    input: |
+      ## Configuring your settings
+
+      ## Monitoring
+
+      ## Breaking the cache
+    want: |
+      1:4:StyleGuide.HeadingGerund:Do not use the gerund 'Configuring' in a heading. Use the imperative (for example, 'Configure' not 'Configuring').
+      3:4:StyleGuide.HeadingGerund:Do not use the gerund 'Monitoring' in a heading. Use the imperative (for example, 'Configure' not 'Configuring').
+      5:4:StyleGuide.HeadingGerund:Do not use the gerund 'Breaking' in a heading. Use the imperative (for example, 'Configure' not 'Configuring').
+  - name: clean
+    input: |
+      ## Configure your settings
+
+      ## Pricing and billing
+
+      ## Breaking changes in CMS 13
+
+      ## Existing content
+    want: ""

@@ -1,0 +1,51 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:793-795 "Section length and scannability"
+#   ("Flag any single section that exceeds roughly 800 words").
+# A script: counts the words between one heading and the next, skipping fenced code,
+# front matter, and markup-only lines.
+extends: script
+message: "This section runs past 800 words. Split it into subsections, or move part of it to a separate article."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#structure-articles
+level: warning
+scope: raw
+script: |
+  text := import("text")
+  matches := []
+  fence := ""
+  offset := 0
+  start := 0
+  startEnd := 0
+  words := 0
+  front := false
+  check := func() {
+    if words > 800 { matches = append(matches, {begin: start, end: startEnd}) }
+  }
+  lines := text.split(scope, "\n")
+  for i, line in lines {
+    trimmed := text.trim_space(line)
+    if i == 0 && trimmed == "---" {
+      front = true
+    } else if front {
+      if trimmed == "---" { front = false }
+    } else if fence != "" {
+      if text.has_prefix(trimmed, fence) { fence = "" }
+    } else if text.has_prefix(trimmed, "```") || text.has_prefix(trimmed, "~~~") {
+      fence = text.substr(trimmed, 0, 3)
+    } else if text.re_match(`^#{1,6} \S`, line) {
+      check()
+      start = offset
+      startEnd = offset + len(line)
+      words = 0
+    } else {
+      words += len(text.re_find(`[A-Za-z][A-Za-z'’-]*`, line, -1) || [])
+    }
+    offset += len(line) + 1
+  }
+  check()
+tests:
+  - name: clean
+    input: |
+      ## Configure the cache
+
+      Set the timeout.
+    want: ""

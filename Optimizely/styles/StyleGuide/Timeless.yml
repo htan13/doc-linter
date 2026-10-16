@@ -1,0 +1,39 @@
+# Rung: Stated, conditional (StyleGuide/warning). Style Guide section ("subjective quality scoring").
+# Source: claude-skills skills/doc-style-guide/SKILL.md:170-172 "Timeless language"
+#   ("Avoid relative terms like 'new,' 'currently,' and 'latest' ... Use specific version numbers or release dates").
+extends: existence
+message: "Avoid the relative term '%s'. Use a specific version number or release date."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#timeless-language
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+tokens:
+  - currently
+  - latest
+  - newest
+  - newly
+  - recently
+  - at present
+  - at this time
+  - at the moment
+  - as of now
+  - nowadays
+  - soon
+  - upcoming
+  - coming soon
+  - in the future
+  - (?:is|are) now (?:available|supported|possible)
+  - the new (?:feature|version|release|UI|experience|editor|interface|functionality|capability|option|setting|page)s?
+tests:
+  - name: fires
+    input: |
+      The latest release is currently in preview. The new editor ships soon.
+    want: |
+      1:5:StyleGuide.Timeless:Avoid the relative term 'latest'. Use a specific version number or release date.
+      1:23:StyleGuide.Timeless:Avoid the relative term 'currently'. Use a specific version number or release date.
+      1:45:StyleGuide.Timeless:Avoid the relative term 'The new editor'. Use a specific version number or release date.
+      1:66:StyleGuide.Timeless:Avoid the relative term 'soon'. Use a specific version number or release date.
+  - name: clean
+    input: |
+      Version 13.4 is in preview. The editor ships in CMS 13.5.
+    want: ""

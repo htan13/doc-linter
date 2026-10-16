@@ -1,0 +1,30 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:712-714 "Introductory text before lists and code"
+#   ("Every list should have an introductory paragraph ... Code blocks should include an introductory statement").
+# Flags a list or code block that starts right after a heading.
+extends: existence
+message: "Add an introductory sentence between the heading and this list or code block."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-lists
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^#{2,6}[ \t][^\n]+\n(?:[ \t]*\n)*[ \t]*(?:[-*+][ \t]|\d+[.)][ \t]|```|~~~)'
+tests:
+  - name: fires
+    input: |
+      ## Configure the cache
+
+      - Set the timeout.
+      - Set the size.
+    want: |
+      1:1:StyleGuide.IntroBeforeList:Add an introductory sentence between the heading and this list or code block.
+  - name: clean
+    input: |
+      ## Configure the cache
+
+      Configure the cache with the following settings:
+
+      - Set the timeout.
+      - Set the size.
+    want: ""

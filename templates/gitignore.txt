@@ -1,0 +1,2 @@
+# Vale downloads the Optimizely package here with `vale sync`. Do not commit it.
+.vale/

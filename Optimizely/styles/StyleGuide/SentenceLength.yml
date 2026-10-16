@@ -1,0 +1,20 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:166 ("aim for fewer than 20 words per sentence") and
+#   :673-675 "Sentence length" ("Flag sentences longer than 20 words").
+# Inherits Std.Readability.SentenceLength. Supersedes Direct.Length and Std.Readability.SentenceLength
+# (dimension: sentence-length).
+extends: Std.Readability.SentenceLength
+message: "This sentence has %d words. Aim for fewer than 20."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#voice-and-tone
+level: warning
+max: 20
+tests:
+  - name: fires
+    input: |
+      This sentence keeps going with clause after clause so that it runs past the limit of twenty words that the guide sets.
+    want: |
+      1:1:StyleGuide.SentenceLength:This sentence has 22 words. Aim for fewer than 20.
+  - name: clean
+    input: |
+      This sentence stays short.
+    want: ""

@@ -1,0 +1,25 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:506-511 "Alt text required on all images".
+# Covers Markdown images, HTML <img>, and the Archbee <Image> component.
+extends: existence
+message: "Add descriptive alt text to this image, in the form 'IMAGE_TYPE of DATA/INFO where REASON_FOR_INCLUDING'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#add-images
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '!\[\s*\]\('
+  - '<(?:Image\b|img\b(?=[^>]*\bsrc=["'']https?://))(?![^>]*\balt=(?:"[^"]*[^"\s][^"]*"|''[^'']*[^''\s][^'']*''|\{[^}]+\}))[^>]*>'
+tests:
+  - name: fires
+    input: |
+      ![](https://example.com/settings.png)
+
+      <Image src="https://example.com/a.png" alt="" />
+    want: |
+      1:1:StyleGuide.AltTextMissing:Add descriptive alt text to this image, in the form 'IMAGE_TYPE of DATA/INFO where REASON_FOR_INCLUDING'.
+      3:1:StyleGuide.AltTextMissing:Add descriptive alt text to this image, in the form 'IMAGE_TYPE of DATA/INFO where REASON_FOR_INCLUDING'.
+  - name: clean
+    input: |
+      ![Screenshot of the Settings page where Credit Card is toggled to Yes](https://example.com/settings.png)
+    want: ""

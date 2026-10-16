@@ -1,0 +1,20 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:605-613 "Weak sentence starters" ("You can", "There is/are").
+extends: existence
+message: "Lead with the action instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#voice-and-tone
+level: warning
+scope: sentence
+tokens:
+  - '^(?:You can(?:not)?|You could|You may|There (?:is|are|was|were|will be|has been|have been)|It is possible to)\b'
+tests:
+  - name: fires
+    input: |
+      You can configure the API by editing the settings file. There are several options available.
+    want: |
+      1:1:StyleGuide.WeakStarters:Lead with the action instead of 'You can'.
+      1:57:StyleGuide.WeakStarters:Lead with the action instead of 'There are'.
+  - name: clean
+    input: |
+      Configure the API by editing the settings file. Several options are available.
+    want: ""

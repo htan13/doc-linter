@@ -1,0 +1,26 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:310-320 "Code font for technical elements"
+#   ("specific error messages ... Do not wrap error messages in quotes, italics, or bold")
+#   and skills/doc-rn-review/SKILL.md:165.
+# Flags a quoted string that follows a word that introduces a message. Italic or bold messages
+# are StyleGuide.ErrorMessageMarkup.
+extends: existence
+message: "Put the error message in code font (backticks), not quotes, italics, or bold: '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#format-code
+level: error
+scope: text & ~frontmatter & ~heading
+nonword: true
+ignorecase: true
+tokens:
+  - '\b(?:error|errors|message|messages|warning|exception)(?: (?:message|text))?:? (?:"[^"\n]{3,120}"|“[^”\n]{3,120}”)'
+  - '\b(?:displays|displayed|shows|showed|returns|returned|throws|threw|logs|logged)(?: (?:the|an?|following|this))*(?: (?:error|message|warning|exception))?:? (?:"[^"\n]{3,120}"|“[^”\n]{3,120}”)'
+tests:
+  - name: fires
+    input: |
+      The system displays "File not found" when the path is invalid.
+    want: |
+      1:12:StyleGuide.ErrorMessageFormat:Put the error message in code font (backticks), not quotes, italics, or bold: 'displays "File not found"'.
+  - name: clean
+    input: |
+      The system displays `File not found` when the path is invalid.
+    want: ""

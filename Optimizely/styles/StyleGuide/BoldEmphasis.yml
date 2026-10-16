@@ -1,0 +1,25 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:291-299 "Bold for UI elements only"
+#   ("Do not use bold for general emphasis". Bad: "This is a **very important** step.").
+# UI labels are capitalized, so bold text that starts lowercase, or bold emphasis words
+# (Note, Important, Warning, not, never, must), is flagged. Vale cannot confirm that a
+# capitalized bold phrase is a UI label, so warning.
+extends: existence
+message: "Use bold only for UI element names. For emphasis, use italics sparingly or a callout ('%s')."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#apply-formatting
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?<![*\w])\*\*(?:[a-z][^*\n]{0,60}|(?:Note|Important|Warning|Tip|Caution|Attention|Remember)[:!]|(?:NOT|NEVER|ALWAYS|MUST|ONLY|DO NOT))\*\*(?!\*)'
+tests:
+  - name: fires
+    input: |
+      This is a **very important** step. **Note:** Save first.
+    want: |
+      1:11:StyleGuide.BoldEmphasis:Use bold only for UI element names. For emphasis, use italics sparingly or a callout ('**very important**').
+      1:36:StyleGuide.BoldEmphasis:Use bold only for UI element names. For emphasis, use italics sparingly or a callout ('**Note:**').
+  - name: clean
+    input: |
+      This is an _important_ step. Click **Save**.
+    want: ""

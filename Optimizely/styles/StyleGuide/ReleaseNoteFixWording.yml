@@ -1,0 +1,25 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-rn-review/SKILL.md:132 ("Avoid strong words like 'failure' or 'error' unless referencing
+#   a specific error message the customer sees"). A bullet that also carries a code-font message is skipped.
+# Applies to release notes only. The package .vale.ini turns the ReleaseNote* rules off, and each
+# *-release-notes repository turns them back on (see templates/release-notes.vale.ini).
+extends: existence
+message: "Avoid '%s' in a bug-fix note unless you quote the error message the customer sees in code font."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)(?<=^[ \t]*[-*]?[ \t]*(?:\([A-Z][A-Z0-9]+-\d+\)[ \t]+–[ \t]+)?Fixed\b(?![^\n]*\x60)[^\n]*?)\b(?:failures?|failing|failed|errors?|erroneous(?:ly)?|crash(?:es|ed)?|broken)\b'
+tests:
+  - name: fires
+    input: |
+      - Fixed the issue where the import job failed with an error on large files.
+    want: |
+      1:40:StyleGuide.ReleaseNoteFixWording:Avoid 'failed' in a bug-fix note unless you quote the error message the customer sees in code font.
+      1:55:StyleGuide.ReleaseNoteFixWording:Avoid 'error' in a bug-fix note unless you quote the error message the customer sees in code font.
+  - name: clean
+    input: |
+      - Fixed the issue where the import job stopped on large files.
+      - Fixed the `Failed to process your payment` checkout error with 3D Secure (3DS) payments.
+    want: ""

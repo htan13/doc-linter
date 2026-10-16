@@ -1,0 +1,40 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:626-628 "Unnecessary words detected" and the
+#   Self-compliance checklist at :55 ("No filler ('simply,' 'easily,' 'successfully,' 'new')").
+# Every listed word is flagged. "new" before a noun you create ("create a new widget") is
+# flagged here; "new" as relative time is StyleGuide.Timeless.
+extends: existence
+message: "'%s' is often unnecessary. Remove it unless it is essential."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#concise-writing
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+tokens:
+  - all
+  - always
+  - easily
+  - either
+  - both
+  - out-of-the-box
+  - out of the box
+  - OOTB
+  - built-in
+  - please
+  - quickly
+  - simply
+  - successfully
+  - therefore
+  - thereby
+  - (?:create|add|make|build|open|define|configure|set up|start|enter|insert|generate|write|register|draft|launch) an? new
+tests:
+  - name: fires
+    input: |
+      Simply create a new widget and save it successfully.
+    want: |
+      1:1:StyleGuide.UnnecessaryWords:'Simply' is often unnecessary. Remove it unless it is essential.
+      1:8:StyleGuide.UnnecessaryWords:'create a new' is often unnecessary. Remove it unless it is essential.
+      1:40:StyleGuide.UnnecessaryWords:'successfully' is often unnecessary. Remove it unless it is essential.
+  - name: clean
+    input: |
+      Create a widget and save it.
+    want: ""

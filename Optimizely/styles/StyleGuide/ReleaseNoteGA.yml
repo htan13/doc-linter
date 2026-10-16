@@ -1,0 +1,24 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-rn-review/SKILL.md:128 ("Use the following structure for general availability:
+#   The [product feature] is now generally available").
+# Applies to release notes only (see templates/release-notes.vale.ini).
+extends: existence
+message: "Write general availability as 'The [feature] is now generally available', not '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+tokens:
+  - 'GA'
+  - '[Gg]eneral [Aa]vailability'
+  - '(?i:is now (?:live|available to all|out of beta|released to all))'
+tests:
+  - name: fires
+    input: |
+      Visual Builder is GA.
+    want: |
+      1:19:StyleGuide.ReleaseNoteGA:Write general availability as 'The [feature] is now generally available', not 'GA'.
+  - name: clean
+    input: |
+      Visual Builder is now generally available.
+    want: ""

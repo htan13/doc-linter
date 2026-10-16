@@ -1,0 +1,31 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:396-404 "Forbidden abbreviations and symbols"
+#   ("e.g." -> "for example"; "i.e." -> "that is"; "etc." -> "and so on"; "vs." or "vs" -> "versus").
+# Supersedes Std.Abbreviations.Latin (dimension: latin-abbreviations).
+extends: substitution
+message: "Do not use '%[2]s'. Use %[1]s."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#abbreviations-and-symbols
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+nonword: true
+action:
+  name: replace
+swap:
+  '\be\.\s?g\.(?:,)?': for example|for instance|such as|like
+  '\beg\.,?': for example|for instance|such as|like
+  '\bi\.\s?e\.(?:,)?': that is
+  '\betc\.?(?=\s|$|\)|,)': and so on
+  '\bvs\.?(?=\s)': versus
+tests:
+  - name: fires
+    input: |
+      Use a block, e.g. a teaser, etc. Compare A vs. B.
+    want: |
+      1:14:StyleGuide.LatinAbbreviations:Do not use 'e.g.'. Use 'for example', 'for instance', 'such as', or 'like'.
+      1:29:StyleGuide.LatinAbbreviations:Do not use 'etc.'. Use 'and so on'.
+      1:44:StyleGuide.LatinAbbreviations:Do not use 'vs.'. Use 'versus'.
+  - name: clean
+    input: |
+      Use a block, for example a teaser, and so on. Compare A versus B.
+    want: ""

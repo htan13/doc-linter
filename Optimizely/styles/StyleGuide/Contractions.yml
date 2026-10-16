@@ -1,0 +1,64 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:236-238 "Do not use contractions".
+# Supersedes Std.Grammar.Contractions (dimension: contractions), which prescribes the opposite.
+extends: substitution
+message: "Do not use contractions. Use '%s' instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#contractions
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+action:
+  name: replace
+swap:
+  "aren[’']t": are not
+  "can[’']t": cannot
+  "couldn[’']t": could not
+  "didn[’']t": did not
+  "doesn[’']t": does not
+  "don[’']t": do not
+  "hadn[’']t": had not
+  "hasn[’']t": has not
+  "haven[’']t": have not
+  "isn[’']t": is not
+  "mustn[’']t": must not
+  "needn[’']t": need not
+  "shouldn[’']t": should not
+  "wasn[’']t": was not
+  "weren[’']t": were not
+  "won[’']t": will not
+  "wouldn[’']t": would not
+  "it[’']s": it is
+  "that[’']s": that is
+  "there[’']s": there is
+  "here[’']s": here is
+  "what[’']s": what is
+  "where[’']s": where is
+  "who[’']s": who is
+  "let[’']s": let us
+  "you[’']re": you are
+  "we[’']re": we are
+  "they[’']re": they are
+  "you[’']ll": you will
+  "we[’']ll": we will
+  "they[’']ll": they will
+  "it[’']ll": it will
+  "that[’']ll": that will
+  "you[’']ve": you have
+  "we[’']ve": we have
+  "they[’']ve": they have
+  "you[’']d": you would
+  "it[’']d": it would
+  "I[’']m": I am
+  "I[’']ve": I have
+  "I[’']ll": I will
+tests:
+  - name: fires
+    input: >
+      You don't need a key, and it's free.
+    want: |
+      1:5:StyleGuide.Contractions:Do not use contractions. Use 'do not' instead of 'don't'.
+      1:27:StyleGuide.Contractions:Do not use contractions. Use 'it is' instead of 'it's'.
+  - name: clean
+    input: >
+      You do not need a key, and it is free. The site's settings stay.
+    want: ""

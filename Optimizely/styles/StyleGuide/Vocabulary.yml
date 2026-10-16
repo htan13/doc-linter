@@ -1,0 +1,80 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:368-392 "Correct vocabulary terms".
+# One swap per entry. Noun-versus-verb pairs (log in/login, set up/setup) are
+# StyleGuide.VerbNounPairs; "data are" is StyleGuide.DataSingular; acronym casing is
+# StyleGuide.AcronymCase.
+extends: substitution
+message: "Use %s instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#word-list
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+action:
+  name: replace
+exceptions:
+  - screen reader
+  - screen readers
+  - screen-reader
+  - full screen
+  - full-screen
+  - fullscreen
+  - splash screen
+  - lock screen
+  - home screen
+  - screen resolution
+  - screen size
+  - screen sizes
+  - screen width
+  - screen capture
+  - screen captures
+  - screen recording
+  - screen sharing
+  - screenshot
+  - screenshots
+  - on-screen
+  - off-screen
+  - green screen
+  - small screen
+  - small screens
+  - large screen
+  - large screens
+  - mobile screen
+  - mobile screens
+swap:
+  '\bscreens?\b': page
+  '\bdrop[- ]?downs?\b(?! list)': drop-down list
+  '\bdropdown lists?\b': drop-down list
+  '\btext[- ]?box(?:es)?\b': text field
+  '\bcheck[- ]box(?:es)?\b': checkbox
+  '\btool[- ]bars?\b': toolbar
+  '\btool[- ]tips?\b': tooltip
+  '\btime-?zones?\b': time zone
+  '\be-?commerce\b': ecommerce
+  '\bon-?prem\b': on-premises
+  '\bon-?premise\b': on-premises
+  '\bon prem(?:ise)?\b': on-premises
+  '\bsynchroni[sz](?:e|es|ed|ing)\b': sync
+  '\bsynchroni[sz]ation\b': sync
+  '\bwhite-?lists?\b': allowlist
+  '\bwhite-?listed\b': allowlisted
+  '\bwhite-?listing\b': allowlisting
+  '\bblack-?lists?\b': denylist
+  '\bblack-?listed\b': denylisted
+  '\bblack-?listing\b': denylisting
+  '\buser interfaces?\b': UI
+  '\bcancell(ed|ing)\b': cancel$1
+  '\bbackend\b': back end|back-end
+  '\bfrontend\b': front end|front-end
+tests:
+  - name: fires
+    input: |
+      Select a value in the dropdown on the Settings screen. The whitelist was cancelled.
+    want: |
+      1:23:StyleGuide.Vocabulary:Use 'drop-down list' instead of 'dropdown'.
+      1:48:StyleGuide.Vocabulary:Use 'page' instead of 'screen'.
+      1:60:StyleGuide.Vocabulary:Use 'allowlist' instead of 'whitelist'.
+      1:74:StyleGuide.Vocabulary:Use 'canceled' instead of 'cancelled'.
+  - name: clean
+    input: |
+      Select a value in the drop-down list on the **Settings** page. Use a screen reader. Sync the time zone in the UI.
+    want: ""

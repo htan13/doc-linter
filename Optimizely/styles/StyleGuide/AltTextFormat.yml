@@ -1,0 +1,29 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:508-511 "Alt text required on all images"
+#   ("Use the format: 'IMAGE_TYPE of DATA/INFO where REASON_FOR_INCLUDING'").
+# Flags alt text that does not open with an image type followed by "of", and alt text that
+# is a file name.
+extends: existence
+message: "Write the alt text in the form 'IMAGE_TYPE of DATA/INFO where REASON_FOR_INCLUDING' (for example, 'Screenshot of the Payment Method page where Credit Card is toggled to Yes')."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#add-images
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '!\[(?!(?i:(?:an? |the )?(?:animated )?(?:screenshot|screen capture|diagram|image|illustration|chart|graph|flowchart|flow chart|icon|logo|photo|photograph|picture|table|video|graphic|infographic|map|drawing|mockup|wireframe|example|gif|animation|architecture diagram|sequence diagram) of ))[^\]\n]+\]\('
+  - '<(?:Image\b|img\b(?=[^>]*\bsrc=["'']https?://))[^>]*\balt="(?!(?i:(?:an? |the )?(?:animated )?(?:screenshot|screen capture|diagram|image|illustration|chart|graph|flowchart|flow chart|icon|logo|photo|photograph|picture|table|video|graphic|infographic|map|drawing|mockup|wireframe|example|gif|animation|architecture diagram|sequence diagram) of ))[^"]+"'
+tests:
+  - name: fires
+    input: |
+      ![oa-rank-block.png](https://example.com/oa-rank-block.png)
+
+      <Image src="https://example.com/a.png" alt="New block in folder" />
+    want: |
+      1:1:StyleGuide.AltTextFormat:Write the alt text in the form 'IMAGE_TYPE of DATA/INFO where REASON_FOR_INCLUDING' (for example, 'Screenshot of the Payment Method page where Credit Card is toggled to Yes').
+      3:1:StyleGuide.AltTextFormat:Write the alt text in the form 'IMAGE_TYPE of DATA/INFO where REASON_FOR_INCLUDING' (for example, 'Screenshot of the Payment Method page where Credit Card is toggled to Yes').
+  - name: clean
+    input: |
+      ![Screenshot of the Rank block where Users is selected in the Rank of field](https://example.com/rank.png)
+
+      <Image src="https://example.com/a.png" alt="Diagram of the publishing flow where blocks move to a folder" />
+    want: ""

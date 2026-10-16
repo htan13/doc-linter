@@ -1,0 +1,27 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:342-364 "Reference UI controls by label, not by icon or location".
+# Flags icon glyphs and visual descriptions of icons. Positional cues are UIPosition.
+extends: existence
+message: "Reference the control by its bold on-screen label or tooltip, not by its icon ('%s')."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#ui-elements
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+nonword: true
+tokens:
+  - '[⋮⋯⚙☰✏🗑➕✖✕⬇⬆]\s*(?:icon|button|menu)?'
+  - '\b(?:the\s+)?(?:three|3)[- ](?:vertical\s+|horizontal\s+)?dots?(?:\s+(?:icon|menu|button))?\b'
+  - '\b(?:the\s+)?(?:caret|expander arrow)\b'
+  - '\b(?:the\s+)?(?:gear|cog|cogwheel|pencil|trash(?:\s+can)?|bin|kebab|hamburger|meatball|ellipsis|ellipses|plus|minus|cross|caret|chevron|arrow|magnifying[- ]glass|eye|bell|wrench|kebab[- ]menu|more[- ]options|overflow|vertical[- ]ellipsis|three[- ]line|info|question[- ]mark|lock|padlock|star|heart|link|copy|clipboard|download|upload|refresh|filter|funnel|sort|search|edit|delete|settings|add|close|expand|collapse)\s+(?:icon|glyph|symbol)s?\b'
+tests:
+  - name: fires
+    input: |
+      Click the gear icon to open settings. Click the ⋮ next to the synonym. Click the three dots.
+    want: |
+      1:7:StyleGuide.IconReference:Reference the control by its bold on-screen label or tooltip, not by its icon ('the gear icon').
+      1:49:StyleGuide.IconReference:Reference the control by its bold on-screen label or tooltip, not by its icon ('⋮ ').
+      1:78:StyleGuide.IconReference:Reference the control by its bold on-screen label or tooltip, not by its icon ('the three dots').
+  - name: clean
+    input: |
+      Click **Settings**. Click **More options**.
+    want: ""

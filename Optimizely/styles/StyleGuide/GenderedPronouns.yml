@@ -1,0 +1,24 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:729 "Pronoun clarity" ("Use gender-neutral language (they/them)
+#   instead of gendered pronouns unless referring to a specific individual"). The exception makes it a warning.
+# Supersedes Std.Usage.GenderedPronouns (dimension: gendered-language).
+extends: existence
+message: "Use gender-neutral language ('they', 'them', 'their') unless the text refers to a specific person."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#voice-and-tone
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+nonword: true
+tokens:
+  - '\b(?:he/she|she/he|s/he|\(s\)he|his/her|her/his|him/her|his or her|her or his|he or she|she or he|him or her)\b'
+  - '\b(?:the|a|each|every|any) (?:user|visitor|customer|developer|editor|admin|administrator|marketer|author|reader)\b[^.!?]{0,40}\b(?:he|she|him|his|her|hers)\b'
+tests:
+  - name: fires
+    input: |
+      Each user checks his or her settings.
+    want: |
+      1:1:StyleGuide.GenderedPronouns:Use gender-neutral language ('they', 'them', 'their') unless the text refers to a specific person.
+  - name: clean
+    input: |
+      Each user checks their settings.
+    want: ""

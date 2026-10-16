@@ -1,0 +1,26 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:817-819 "Broken, incomplete, or placeholder content".
+extends: existence
+message: "Remove or finish the leftover drafting text '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#structure-articles
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+nonword: true
+tokens:
+  - '\b(?:TODO|TBD|TBA|FIXME|XXX|WIP)\b'
+  - '(?i)\blorem ipsum\b'
+  - '(?i)\[(?:placeholder|insert [^\]]+|add [^\]]+ here|link|screenshot|image) ?\]'
+  - '(?i)\b(?:coming soon|to be determined|content goes here|add (?:content|text|details) here)\b'
+  - '\b(?:the|a|an|of|to|with|for|and)\s*[—–-]\s*$'
+tests:
+  - name: fires
+    input: |
+      TODO: describe the timeout. Lorem ipsum.
+    want: |
+      1:1:StyleGuide.PlaceholderContent:Remove or finish the leftover drafting text 'TODO'.
+      1:29:StyleGuide.PlaceholderContent:Remove or finish the leftover drafting text 'Lorem ipsum'.
+  - name: clean
+    input: |
+      Set the timeout in seconds.
+    want: ""

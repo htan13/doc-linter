@@ -1,0 +1,14 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:795 "Section length and scannability"
+#   ("Flag articles that exceed roughly 3,000 words total and recommend splitting into multiple articles").
+extends: metric
+message: "This article is about %s words. Split articles longer than 3,000 words into several articles."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#structure-articles
+level: warning
+formula: words
+condition: "> 3000"
+tests:
+  - name: clean
+    input: |
+      This article is short.
+    want: ""

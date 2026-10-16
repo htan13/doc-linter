@@ -1,0 +1,31 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:596-601 "Hedging language" and the Self-compliance
+#   checklist at :55 ("No hedging ('may,' 'might,' 'can')").
+# Inherits Direct.Hedging and adds the source's hedges. Bare "can" is left to
+# StyleGuide.WeakStarters ("You can"), because "can" also states capability.
+# Supersedes Direct.Hedging (dimension: hedging).
+extends: Direct.Hedging
+message: "Avoid hedging ('%s'). State it directly."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#voice-and-tone
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+tokens+:
+  - may(?! \d)
+  - might
+  - possibly
+  - perhaps
+  - probably
+  - seems to
+  - appears to
+  - you might want to
+  - you may wish to
+tests:
+  - name: fires
+    input: |
+      You might want to consider installing the SDK.
+    want: |
+      1:1:StyleGuide.Hedging:Avoid hedging ('You might want to'). State it directly.
+  - name: clean
+    input: |
+      Install the SDK.
+    want: ""

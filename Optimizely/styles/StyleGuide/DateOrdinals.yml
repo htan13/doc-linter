@@ -1,0 +1,22 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:424 "Dates must be fully written"
+#   ("Do not use ordinal suffixes (st, nd, rd, th)").
+extends: existence
+message: "Do not use an ordinal suffix in the date '%s'. Write 'July 30, 2021'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#dates-and-times
+level: error
+scope: text & ~frontmatter
+nonword: true
+tokens:
+  - '\b(?:January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)\.?\s+\d{1,2}(?:st|nd|rd|th)\b'
+  - '\b\d{1,2}(?:st|nd|rd|th)\s+(?:of\s+)?(?:January|February|March|April|May|June|July|August|September|October|November|December)\b'
+tests:
+  - name: fires
+    input: |
+      The release shipped on July 30th, 2021.
+    want: |
+      1:24:StyleGuide.DateOrdinals:Do not use an ordinal suffix in the date 'July 30th'. Write 'July 30, 2021'.
+  - name: clean
+    input: |
+      The release shipped on July 30, 2021, the 3rd release of the year.
+    want: ""

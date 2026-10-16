@@ -1,0 +1,30 @@
+# Rung: Stated, conditional (StyleGuide/warning). The Style Guide section of the source is
+#   'subjective quality scoring', so its rules ship as warnings.
+# Source: claude-skills skills/doc-style-guide/SKILL.md:188-190 "Descriptive headings"
+#   ("Use specific, descriptive headings instead of generic one-word titles like 'Fee' or 'Pricing'").
+# Flags a heading that is a single word. Acronym-only headings (FAQ) and the standard
+# section names the source's Clarity rules call for (overview, prerequisites, troubleshooting) are exempt.
+extends: existence
+message: "'%s' is a generic one-word heading. Use a specific, descriptive heading."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-headings
+level: warning
+scope: heading
+nonword: true
+tokens:
+  - '\A[A-Z][a-z][\w-]*\z'
+exceptions:
+  - '^Prerequisites$'
+  - '^Troubleshooting$'
+  - '^Overview$'
+tests:
+  - name: fires
+    input: |
+      ## Pricing
+    want: |
+      1:4:StyleGuide.HeadingGeneric:'Pricing' is a generic one-word heading. Use a specific, descriptive heading.
+  - name: clean
+    input: |
+      ## Pricing for Feature Experimentation plans
+
+      ## FAQ
+    want: ""

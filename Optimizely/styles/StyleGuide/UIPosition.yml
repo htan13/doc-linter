@@ -1,0 +1,29 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:342-364 "Reference UI controls by label, not by icon or location"
+#   (avoid "directional or positional cues": "at the top", "in the upper-right corner", "next to", "on the left side").
+# Only screen-position phrases are errors here. Article direction ("above", "below") is the
+# conditional StyleGuide.Directional warning.
+extends: existence
+message: "Do not describe where a control sits on the page ('%s'). Name the control by its bold label."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#ui-elements
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+tokens:
+  - '(?:in|at|on)\s+the\s+(?:upper|lower|top|bottom)[- ](?:right|left)(?:[- ]hand)?(?:\s+(?:corner|side|of the (?:page|screen|window|panel|dialog|toolbar)))?'
+  - '(?:upper|lower|top|bottom)[- ](?:right|left)[- ]hand\s+corner'
+  - '(?:at|on|in)\s+the\s+(?:top|bottom)\s+of\s+the\s+(?:page|screen|window|panel|dialog|toolbar|list|table|form|editor|sidebar|navigation)'
+  - '(?:on|in)\s+the\s+(?:left|right)(?:[- ]hand)?\s+(?:side|pane|panel|sidebar|corner|menu|of the (?:page|screen|window|toolbar))'
+  - '(?:to the (?:left|right) of|next to|beside)\s+(?:the\s+)?(?:\*\*[^*]+\*\*|[\w-]+\s+(?:field|button|icon|column|row|tab|menu|link|name|item|entry|label|option|synonym|toggle|checkbox|value))'
+tests:
+  - name: fires
+    input: |
+      Click Refresh in the upper-right corner. Click the button at the top of the page. Click **Edit** next to the **Name** field.
+    want: |
+      1:15:StyleGuide.UIPosition:Do not describe where a control sits on the page ('in the upper-right corner'). Name the control by its bold label.
+      1:59:StyleGuide.UIPosition:Do not describe where a control sits on the page ('at the top of the page'). Name the control by its bold label.
+      1:98:StyleGuide.UIPosition:Do not describe where a control sits on the page ('next to the Name field'). Name the control by its bold label.
+  - name: clean
+    input: |
+      Click **Refresh**. Click **More options**.
+    want: ""

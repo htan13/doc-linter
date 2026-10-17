@@ -1,0 +1,50 @@
+# Promptless house rule. This file is the source of truth; promptless.ai vendors
+# it into vale/Promptless/styles/House/ for its published package.
+#
+# Scaffolding meta-text: prose whose subject is the document rather than the
+# subject matter — a section opener restating its own heading, or a count of
+# contentless nouns announcing what the reader is about to receive.
+#
+# The tokens carry only the shapes with a fixed lexical skeleton. A frame that
+# states a real precondition ("the rest of this guide assumes Docker") reads the
+# same and is not the tell, so `the rest of this <noun>` and a bare "everything
+# here" are deliberately absent: both matched legitimate prose under test.
+# `references/ai-tells.md` in `system:author-documentation` owns that judgment;
+# this rule owns the fixed shapes.
+#
+# A frame may close on a period, a semicolon, or a colon that ends the line. A
+# colon followed by text on the same line is not a frame: in "Three key reasons
+# matter: the retry budget, the deadline, and the error class" the words after
+# the colon are the sentence's subject, and cutting the opening leaves a fragment.
+# A colon ending the line leads a list, which stands on its own once the frame goes.
+#
+# "everything above" is absent for the same reason: it usually limits scope
+# ("Everything above applies only to the production cluster"), which the tell's
+# boundary calls a keep. The topic frame ("In this section, we will explore") is
+# absent because `Direct.Preamble` already matches it, and two rules reporting one
+# sentence gives the writer two findings to resolve for one edit.
+extends: existence
+message: "Scaffolding: '%s'. Cut the frame and start with the content."
+level: error
+ignorecase: true
+# The tokens supply their own word boundaries.
+nonword: true
+tokens:
+  # Document deixis, as the object a clause closes on. The terminal punctuation is
+  # what separates it from a threshold or a property: "everything below." points at
+  # the page, while "everything below 0 °C" states a limit and carries a referent of
+  # its own. A bare "what follows" has no such separator, so it belongs to judgment.
+  - '(?m)\beverything (?:below|that follows)(?:\s*[.;]|\s*:$)'
+  # Enumerated frame — a count of contentless containers plus a load-bearing verb,
+  # where the verb's object is the document or nothing at all. That object is the
+  # whole discriminator: "Three things matter here." says nothing, while "Three key
+  # principles shape the migration plan:" names its subject and goes on to list the
+  # principles. Cutting the second loses the sentence. Where the object is a real
+  # noun the frame may still be padding, but no token can tell, so it stays with
+  # `references/ai-tells.md` in `system:author-documentation`.
+  - '(?m)\b(?:one|two|three|four|five|six|a few|several|a handful of) (?:key |core |main |big |simple |basic |important |critical )?(?:facts?|things?|ideas?|principles?|points?|themes?|threads?|reasons?|constraints?|questions?|decisions?|observations?|tensions?|truths?|forces?) (?:anchors?|underpins?|grounds?|governs?|shapes?|shaped|frames?|organi[sz]es?|structures?|matters?|drives?|drove|stands? out)(?: (?:here|everything (?:below|that follows)|what follows))?(?:\s*[.;]|\s*:$)'
+  # Count-first announcement of what the reader is about to receive. It has to close
+  # on a contentless tail or end there. "There are four reasons for this." announces
+  # nothing, while "There are four reasons the endpoint returns 403:" names them, and
+  # cutting that leaves the sentence ungrammatical and loses the count.
+  - '(?m)\bthere are (?:only )?(?:two|three|four|five|six|\d+) (?:key |main |core |important )?(?:things?|facts?|reasons?|points?|ideas?|takeaways?|considerations?)(?: (?:for this|to know|here|at play|to consider))?(?:\s*[.;]|\s*:$)'

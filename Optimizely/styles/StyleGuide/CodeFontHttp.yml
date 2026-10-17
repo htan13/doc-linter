@@ -1,0 +1,27 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:310 "Code font for technical elements"
+#   (HTTP verbs, HTTP status codes, environment variables, constants).
+extends: existence
+message: "Put '%s' in code font (backticks)."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#format-code
+level: error
+ignorecase: false
+nonword: true
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags & ~heading
+tokens:
+  - '\b(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\b(?= (?:request|requests|method|call|calls|endpoint|to|/|https?:))'
+  - '(?<=\b(?:a|an|the|returns?|returned|receive[sd]?|send[s]?|with|HTTP|status|code|codes|error) )(?:[1-5]\d{2})(?:\s(?:OK|Created|Accepted|No Content|Moved Permanently|Found|Not Modified|Bad Request|Unauthorized|Forbidden|Not Found|Method Not Allowed|Conflict|Gone|Too Many Requests|Internal Server Error|Bad Gateway|Service Unavailable|Gateway Timeout))?(?= (?:status|response|error|code)|\b(?:\s(?:OK|Created|Bad Request|Unauthorized|Forbidden|Not Found|Conflict|Internal Server Error)))'
+  - '\b(?:HTTP |status code |error code )[1-5]\d{2}\b'
+  - '(?<![\w$`])[A-Z][A-Z0-9]*_[A-Z0-9_]+(?![\w`])'
+tests:
+  - name: fires
+    input: |
+      Send a POST request. The API returns HTTP 404. Set ASPNETCORE_ENVIRONMENT first.
+    want: |
+      1:8:StyleGuide.CodeFontHttp:Put 'POST' in code font (backticks).
+      1:38:StyleGuide.CodeFontHttp:Put 'HTTP 404' in code font (backticks).
+      1:52:StyleGuide.CodeFontHttp:Put 'ASPNETCORE_ENVIRONMENT' in code font (backticks).
+  - name: clean
+    input: |
+      Send a `POST` request. The API returns `404`. Set `ASPNETCORE_ENVIRONMENT` first.
+    want: ""

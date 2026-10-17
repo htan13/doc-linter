@@ -1,0 +1,53 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:563-585 "Use correct Product names"
+#   ("always use the most recent name ... unless referring to specific package names").
+# Package names live in code font, which Vale does not lint, so the exception holds.
+# Retired names that are also ordinary English words ("Welcome", "Perform", "Find", "Web",
+# "Edge", "Program Management") are flagged only in their product forms ("Optimizely Find",
+# "Episerver Find", "Optimizely Web", "Optimizely Edge"). See STYLE_GUIDE.md for the full list.
+# CMS (SaaS) and CMS (PaaS) forms are StyleGuide.CmsVersionedNames.
+extends: substitution
+message: "Use the current product name %s instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#product-names
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+action:
+  name: replace
+swap:
+  '\bNet[Ss]pring\b': Analytics
+  '\b(?:Optimizely )?OA\b': Analytics
+  '\bB2B Analytics\b': B2B Commerce Analytics
+  '\b(?:Experimentation Collaboration|Exp Collab|Collab)\b': Collaboration
+  '\bCoCo\b': Commerce Connect
+  '\b(?:Customized Commerce|Commerce Cloud|B2C Commerce)\b': Commerce Connect
+  '\b(?:Insite Commerce|InsiteCommerce|Insite|CFG)\b': Configured Commerce
+  '\bB2B Commerce\b(?! Analytics)': Configured Commerce
+  '\b(?:Newscred|NewsCred|Marketing Orchestration)\b': Content Marketing Platform|CMP
+  '\b(?:Optimizely Welcome|Episerver Welcome)\b': Content Marketing Platform|CMP
+  '\b(?:Content Recs|Idio)\b': Content Recommendations
+  '\bCR\b': Content Recommendations
+  '\bInsite ?Mobile\b': Commerce Mobile
+  '\b(?:Zaius|Intelligence Cloud)\b': Optimizely Data Platform|Data Platform|ODP
+  '\bFull[- ]Stack\b': Feature Experimentation
+  '\bOptiID\b': Opti ID
+  '(?<!Optimizely )\bConnect Platform\b': Optimizely Connect Platform|OCP
+  '\b(?:Optimizely|Episerver) Edge\b': Performance Edge
+  '\bP13n\b': Personalization
+  '\b(?:Product Recs|Optimizely Perform|Episerver Perform)\b': Product Recommendations
+  '\b(?:Optimizely|Episerver|EPiServer) Find\b': Search & Navigation
+  '\bOptimizely Web\b(?! (?:Experimentation|Companion))': Web Experimentation
+tests:
+  - name: fires
+    input: |
+      Connect NetSpring to Zaius. Use Full Stack with Episerver Find.
+    want: |
+      1:9:StyleGuide.ProductNames:Use the current product name 'Analytics' instead of 'NetSpring'.
+      1:22:StyleGuide.ProductNames:Use the current product name 'Optimizely Data Platform', 'Data Platform', or 'ODP' instead of 'Zaius'.
+      1:33:StyleGuide.ProductNames:Use the current product name 'Feature Experimentation' instead of 'Full Stack'.
+      1:49:StyleGuide.ProductNames:Use the current product name 'Search & Navigation' instead of 'Episerver Find'.
+  - name: clean
+    input: |
+      Connect Analytics to Optimizely Data Platform. Use Feature Experimentation with Search & Navigation.
+      Use B2B Commerce Analytics and Optimizely Connect Platform. Run full-stack tests on the edge.
+    want: ""

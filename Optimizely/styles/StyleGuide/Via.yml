@@ -1,0 +1,23 @@
+# Rung: Stated, conditional (StyleGuide/warning). "Avoid using 'via'".
+# Source: copilot-instructions.md, the agent-instruction file that 26 of the 27 Optimizely doc repositories carry with
+#   identical content (.github/copilot-instructions.md; episerver/cms-13-docs at its root, commit 6dab204).
+extends: substitution
+message: "Use %s instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#word-list
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+action:
+  name: replace
+swap:
+  '\bvia\b': through|with|by using
+tests:
+  - name: fires
+    input: |
+      Connect via the API.
+    want: |
+      1:9:StyleGuide.Via:Use 'through', 'with', or 'by using' instead of 'via'.
+  - name: clean
+    input: |
+      Connect through the API.
+    want: ""

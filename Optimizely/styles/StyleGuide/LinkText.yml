@@ -1,0 +1,27 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:206-208 "Cross-references and links" and
+#   :697-702 "Link text quality" ("Do not use 'click here,' 'see here,' or bare URLs as link text").
+extends: existence
+message: "Use the destination page title or a concise description as link text, not '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#add-links
+level: warning
+scope: raw
+nonword: true
+ignorecase: true
+tokens:
+  - '\[(?:here|click here|see here|this|this link|this page|this article|link|more|read more|learn more|more info|more information)\]\('
+  - '\[\s*(?:https?://|www\.)[^\]\n]*\]\('
+  - '<https?://[^>\s]+>'
+  - '\b(?:click|tap|go|see) here\b'
+  - '(?<![(\[<"''`=/])\bhttps?://[^\s)\]>"''`]+'
+tests:
+  - name: fires
+    input: |
+      For more details, click [here](https://example.com). See [https://example.com](https://example.com).
+    want: |
+      1:25:StyleGuide.LinkText:Use the destination page title or a concise description as link text, not '[here]('.
+      1:58:StyleGuide.LinkText:Use the destination page title or a concise description as link text, not '[https://example.com]('.
+  - name: clean
+    input: |
+      For details, go to the [reference library](https://example.com).
+    want: ""

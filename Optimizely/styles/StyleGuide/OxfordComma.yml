@@ -1,0 +1,20 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:282-287 "Oxford comma required".
+# Inherits the pattern and false-positive guards from Std.Punctuation.OxfordComma.
+extends: Std.Punctuation.OxfordComma
+message: "Use the Oxford comma before the conjunction in '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#use-punctuation
+level: error
+exceptions:
+  - '^, (?:including|such as|like|especially|for example|for instance|so|go|select|click|open|enter|used|one)\b'
+  - '^, \w+ing\b'
+tests:
+  - name: fires
+    input: >
+      Create, edit and delete content.
+    want: |
+      1:7:StyleGuide.OxfordComma:Use the Oxford comma before the conjunction in ', edit and delete content.'.
+  - name: clean
+    input: >
+      Create, edit, and delete content.
+    want: ""

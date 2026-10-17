@@ -1,0 +1,26 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:751-759 "Apply only one formatting type to text"
+#   (Bad: "See *[reference library](url)*", "This is *_important_*").
+extends: existence
+message: "Apply only one formatting type to text ('%s')."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#apply-formatting
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?<![*_\w])(?:\*\*\*|\*_|_\*|\*\*_|_\*\*|__\*|\*__)[^\s*_]'
+  - '(?<![*_\w])[*_]{1,2}\[[^\]\n]+\]\([^)\n]+\)[*_]{1,2}(?![*_\w])'
+  - '\*\*`[^`\n]+`\*\*'
+  - '(?<![*\w])\*`[^`\n]+`\*(?!\*)'
+tests:
+  - name: fires
+    input: |
+      See *[reference library](https://example.com)*. This is *_important_*. Set **`timeout`**.
+    want: |
+      1:5:StyleGuide.FormattingStacked:Apply only one formatting type to text ('*[reference library](https://example.com)*').
+      1:57:StyleGuide.FormattingStacked:Apply only one formatting type to text ('*_i').
+      1:76:StyleGuide.FormattingStacked:Apply only one formatting type to text ('**`timeout`**').
+  - name: clean
+    input: |
+      See [reference library](https://example.com). This is _important_. Set `timeout`.
+    want: ""

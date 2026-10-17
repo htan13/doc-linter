@@ -1,0 +1,44 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:502 "Heading hierarchy" ("Avoid H4 — restructure the
+#   article or use bold text instead") and :807. "Avoid" is hedged, so warning.
+extends: script
+message: "Avoid H4 and deeper headings. Restructure the article, or use a bold paragraph lead instead."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-headings
+level: warning
+scope: raw
+script: |
+  text := import("text")
+  matches := []
+  fence := ""
+  offset := 0
+  for line in text.split(scope, "\n") {
+    trimmed := text.trim_space(line)
+    if fence != "" {
+      if text.has_prefix(trimmed, fence) { fence = "" }
+    } else if text.has_prefix(trimmed, "```") {
+      fence = "```"
+    } else if text.has_prefix(trimmed, "~~~") {
+      fence = "~~~"
+    } else if text.re_match(`^#{4,6} \S`, line) {
+      matches = append(matches, {begin: offset, end: offset + len(line)})
+    }
+    offset += len(line) + 1
+  }
+tests:
+  - name: fires
+    input: |
+      ## Configure the cache
+
+      ### Set the timeout
+
+      #### Advanced timeout options
+    want: |
+      5:1:StyleGuide.HeadingH4:Avoid H4 and deeper headings. Restructure the article, or use a bold paragraph lead instead.
+  - name: clean
+    input: |
+      ## Configure the cache
+
+      ### Set the timeout
+
+      **Advanced timeout options**
+    want: ""

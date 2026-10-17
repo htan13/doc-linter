@@ -1,0 +1,24 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:324-329 "Italics for user-entered text"
+#   (Bad: "Enter admin in the **Password** field." Good: "Enter *admin* in the **Password** field.").
+# Flags an Enter or Type instruction whose value is plain or quoted before "in the **Field**".
+# Vale cannot tell a literal value from a description ("Enter your name"), so warning.
+extends: existence
+message: "Italicize the text the reader enters, for example 'Enter *admin* in the **Password** field.'"
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#apply-formatting
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '\b(?:[Ee]nter|[Tt]ype|[Ii]nput|[Pp]aste)\s+(?:"[^"\n]+"|“[^”\n]+”|''[^''\n]+''|(?!(?:a|an|the|your|any|this|that|these|those|each|one|some|its|their|all|values?|text|data|details|information|credentials)\b)[A-Za-z0-9][^\s*_`]*)\s+(?:in|into)\s+the\s+\*\*'
+tests:
+  - name: fires
+    input: |
+      Enter admin in the **Password** field. Type "Home" in the **Name** field.
+    want: |
+      1:1:StyleGuide.UserInputItalics:Italicize the text the reader enters, for example 'Enter *admin* in the **Password** field.'
+      1:40:StyleGuide.UserInputItalics:Italicize the text the reader enters, for example 'Enter *admin* in the **Password** field.'
+  - name: clean
+    input: |
+      Enter *admin* in the **Password** field. Enter your name in the **Name** field.
+    want: ""

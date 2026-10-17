@@ -1,0 +1,20 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:679-681 "Semicolons" (acceptable only in a series with intervening commas).
+extends: existence
+message: "Split this into two sentences instead of using a semicolon (a semicolon is acceptable only in a series with internal commas)."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#use-punctuation
+level: warning
+scope: sentence
+nonword: true
+tokens:
+  - ';(?![^;]*,[^;]*;)'
+tests:
+  - name: fires
+    input: |
+      The cache refreshes hourly; the index refreshes daily.
+    want: |
+      1:27:StyleGuide.Semicolons:Split this into two sentences instead of using a semicolon (a semicolon is acceptable only in a series with internal commas).
+  - name: clean
+    input: |
+      The cache refreshes hourly. The index refreshes daily.
+    want: ""

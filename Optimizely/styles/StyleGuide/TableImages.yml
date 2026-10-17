@@ -1,0 +1,25 @@
+# Rung: Stated, conditional (StyleGuide/warning). Style Guide section ("Avoid using images or icons in tables").
+# Source: claude-skills skills/doc-style-guide/SKILL.md:220 "Accessible tables".
+extends: existence
+message: "Avoid images and icons in tables. Describe the value in words."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#build-accessible-tables
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^[ \t]*\|[^\n]*(?:!\[[^\]]*\]\(|<(?:img|Image)\b)[^\n]*\|'
+  - '<td[^>]*>(?:(?!</td>).)*?(?:<(?:img|Image)\b|!\[[^\]]*\]\()'
+tests:
+  - name: fires
+    input: |
+      | Feature | Icon | Notes |
+      |---|---|---|
+      | Flags | ![Icon of a flag](https://example.com/flag.png) | Yes |
+    want: |
+      3:1:StyleGuide.TableImages:Avoid images and icons in tables. Describe the value in words.
+  - name: clean
+    input: |
+      | Feature | Included | Notes |
+      |---|---|---|
+      | Flags | Yes | None |
+    want: ""

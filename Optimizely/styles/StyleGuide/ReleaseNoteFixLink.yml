@@ -1,0 +1,22 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-rn-review/SKILL.md:138 ("Do not include a link to documentation" in a bug-fix note) and check B3.
+# Applies to release notes only. The package .vale.ini turns the ReleaseNote* rules off, and each
+# *-release-notes repository turns them back on (see templates/release-notes.vale.ini).
+extends: existence
+message: "Do not link to documentation from a bug-fix note. If the fix changes documented behavior, write it as an enhancement."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^[ \t]*(?:[-*][ \t]+)?(?:\([A-Z][A-Z0-9]+-\d+\)[ \t]+–[ \t]+)?Fixed\b[^\n]*?(?:\]\(|:Link\[)'
+tests:
+  - name: fires
+    input: |
+      - Fixed the issue where sorting ignored first names. See [Manage users](https://example.com).
+    want: |
+      1:1:StyleGuide.ReleaseNoteFixLink:Do not link to documentation from a bug-fix note. If the fix changes documented behavior, write it as an enhancement.
+  - name: clean
+    input: |
+      - Fixed the issue where sorting ignored first names.
+    want: ""

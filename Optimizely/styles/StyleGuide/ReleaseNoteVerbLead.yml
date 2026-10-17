@@ -1,0 +1,30 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-rn-review/SKILL.md:123 ("Always start the first tier of each bulleted sentence with a verb
+#   in past tense"), :132 (bug fixes begin with "Fixed"), and check E2. The source's own good example at :295
+#   ("Define a default fallback language ...") does not follow it, so this is a warning; see STYLE_GUIDE.md.
+# Applies to release notes only. The package .vale.ini turns the ReleaseNote* rules off, and each
+# *-release-notes repository turns them back on (see templates/release-notes.vale.ini).
+# Top-level bullets that open with a bold named feature, a code term, or a link are skipped.
+extends: existence
+message: "Start a top-level release-note bullet with a past-tense verb (Added, Improved, Released, Fixed), not '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)(?<=^[-*][ \t]+(?:\([A-Z][A-Z0-9]+-\d+\)[ \t]+–[ \t]+)?(?:\(Beta\)[ \t]+)?)(?![*\x60\[:(<!\\])(?!(?:[A-Z][a-z]+ed|Built|Rebuilt|Made|Set|Reset|Ran|Began|Brought|Wrote|Rewrote|Split|Cut|Shut|Sped|Led|Met|Kept|Put|Taught|Found|Gave|Took|Won)\b)[A-Za-z][\w-]*'
+tests:
+  - name: fires
+    input: |
+      - Adds request timing metrics.
+      - New option for the cache.
+    want: |
+      1:3:StyleGuide.ReleaseNoteVerbLead:Start a top-level release-note bullet with a past-tense verb (Added, Improved, Released, Fixed), not 'Adds'.
+      2:3:StyleGuide.ReleaseNoteVerbLead:Start a top-level release-note bullet with a past-tense verb (Added, Improved, Released, Fixed), not 'New'.
+  - name: clean
+    input: |
+      - Added request timing metrics.
+      - Fixed the issue where the cache did not clear.
+      - **Visual Builder** – Released a drag-and-drop editor.
+      - `graph_synonyms` – Manages synonyms in Optimizely Graph.
+    want: ""

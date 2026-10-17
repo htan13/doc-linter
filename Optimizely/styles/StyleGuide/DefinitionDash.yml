@@ -1,0 +1,29 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:551-559 "Define lists of fields or values with en dashes"
+#   ("always use an en dash to offset the definition. Do not use colons. Bold the term").
+# Flags a list entry whose bold or code term is followed by a colon, hyphen, or em dash,
+# and a bold term with the colon inside the bold.
+extends: existence
+message: "Offset the definition with an en dash (–), not a colon or hyphen: '**Term** – Definition.'"
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-lists
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^[ \t]*(?:[-*+]|\d+[.)])[ \t]+(?:\*\*[^*\n]+\*\*|`[^`\n]+`)[ \t]*(?::|-(?=\s)|—|--)'
+  - '(?m)^[ \t]*(?:[-*+]|\d+[.)])[ \t]+\*\*[^*\n]+[:：]\*\*'
+tests:
+  - name: fires
+    input: |
+      - **Name**: Enter your name in the text field.
+      - **Email:** Enter your email address.
+      - `timeout` - Enter the timeout.
+    want: |
+      1:1:StyleGuide.DefinitionDash:Offset the definition with an en dash (–), not a colon or hyphen: '**Term** – Definition.'
+      2:1:StyleGuide.DefinitionDash:Offset the definition with an en dash (–), not a colon or hyphen: '**Term** – Definition.'
+      3:1:StyleGuide.DefinitionDash:Offset the definition with an en dash (–), not a colon or hyphen: '**Term** – Definition.'
+  - name: clean
+    input: |
+      - **Name** – Enter your name in the text field.
+      - `timeout` – Enter the timeout.
+    want: ""

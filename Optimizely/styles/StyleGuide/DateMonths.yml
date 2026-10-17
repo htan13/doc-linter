@@ -1,0 +1,22 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:422-430 "Dates must be fully written"
+#   ("Do not abbreviate months when used with a specific date").
+extends: existence
+message: "Spell out the month in '%s' (for example, 'July 30, 2021')."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#dates-and-times
+level: error
+scope: text & ~frontmatter
+nonword: true
+tokens:
+  - '\b(?:Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\.?\s+\d{1,2}(?:st|nd|rd|th)?\b(?:,?\s+\d{4})?'
+  - '\b\d{1,2}\s+(?:Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)\.?\b(?:,?\s+\d{4})?'
+tests:
+  - name: fires
+    input: |
+      The release shipped on Jul. 30, 2021.
+    want: |
+      1:24:StyleGuide.DateMonths:Spell out the month in 'Jul. 30, 2021' (for example, 'July 30, 2021').
+  - name: clean
+    input: |
+      The release shipped on July 30, 2021.
+    want: ""

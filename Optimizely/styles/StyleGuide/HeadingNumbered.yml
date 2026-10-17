@@ -1,0 +1,27 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:260-278 "No numbered steps or section numbers in headings".
+extends: existence
+message: "Do not put step or section numbers in headings ('%s'). Use a descriptive heading."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-headings
+level: error
+scope: [heading, title]
+ignorecase: true
+nonword: true
+tokens:
+  - '^(?:Step|Part|Phase|Section|Stage)\s+\d+\b[.:)\-–—]?'
+  - '^(?!(?:19|20)\d\d\b)\d+(?:\.\d+)*[.:)]?(?=\s)'
+tests:
+  - name: fires
+    input: |
+      ## Step 1: Configure the payment settings
+
+      ## 1.1.1.2 Advanced options
+    want: |
+      1:4:StyleGuide.HeadingNumbered:Do not put step or section numbers in headings ('Step 1:'). Use a descriptive heading.
+      3:4:StyleGuide.HeadingNumbered:Do not put step or section numbers in headings ('1.1.1.2'). Use a descriptive heading.
+  - name: clean
+    input: |
+      ## Configure the payment settings
+
+      ## Upgrade to CMS 13
+    want: ""

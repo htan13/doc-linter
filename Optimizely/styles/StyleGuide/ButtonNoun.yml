@@ -1,0 +1,27 @@
+# Rung: Stated, conditional (StyleGuide/warning). "Avoid using 'button'. Just use the name of the button."
+#   Broader than StyleGuide.ButtonWord, which covers a bold label followed by "button". Radio buttons are excepted.
+# Source: copilot-instructions.md, the agent-instruction file that 26 of the 27 Optimizely doc repositories carry with
+#   identical content (.github/copilot-instructions.md; episerver/cms-13-docs at its root, commit 6dab204).
+extends: existence
+message: "Avoid the word '%s'. Use the control's bold label."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#ui-elements
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+tokens:
+  - buttons?
+exceptions:
+  - radio button
+  - radio buttons
+  - option button
+  - option buttons
+tests:
+  - name: fires
+    input: |
+      Use the button to save the page.
+    want: |
+      1:9:StyleGuide.ButtonNoun:Avoid the word 'button'. Use the control's bold label.
+  - name: clean
+    input: |
+      Click **Save**. Select a radio button.
+    want: ""

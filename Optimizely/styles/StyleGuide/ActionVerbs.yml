@@ -1,0 +1,28 @@
+# Rung: Stated, unconditional (StyleGuide/error). "Always use 'hover' ...", "Always use 'press' when referring to
+#   keyboard keys", "Always use enter for instructing the user to type text".
+# Source: copilot-instructions.md, the agent-instruction file that 26 of the 27 Optimizely doc repositories carry with
+#   identical content (.github/copilot-instructions.md; episerver/cms-13-docs at its root, commit 6dab204).
+extends: substitution
+message: "Use %s instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#ui-elements
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+action:
+  name: replace
+swap:
+  '\b(?:[Mm]ouse ?over|[Rr]oll ?over)\b': hover over
+  '\b(?:[Hh]it|[Ss]trike|[Tt]ap)(?= (?:the )?(?:Enter|Return|Tab|Esc|Escape|Shift|Ctrl|Control|Alt|Option|Command|Cmd|Delete|Backspace|Space|Spacebar|F\d{1,2})\b)': press
+  '\b[Tt]ype(?= (?:"[^"\n]+"|\S+|your \w+|a \w+|the \w+) (?:in|into) the [^.\n]*?\b(?:field|box|text field|search|editor|prompt|terminal|console)\b)': enter
+tests:
+  - name: fires
+    input: |
+      Mouse over the name. Hit Enter. Type *Home* in the **Name** field.
+    want: |
+      1:1:StyleGuide.ActionVerbs:Use 'hover over' instead of 'Mouse over'.
+      1:22:StyleGuide.ActionVerbs:Use 'press' instead of 'Hit'.
+      1:33:StyleGuide.ActionVerbs:Use 'enter' instead of 'Type'.
+  - name: clean
+    input: |
+      Hover over the name. Press Enter. Enter *Home* in the **Name** field. Select a content type.
+    want: ""

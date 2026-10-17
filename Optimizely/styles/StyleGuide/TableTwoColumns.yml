@@ -1,0 +1,25 @@
+# Rung: Stated, conditional (StyleGuide/warning). Style Guide section ("subjective quality scoring").
+# Source: claude-skills skills/doc-style-guide/SKILL.md:220 "Accessible tables" ("If you only have two columns, use a list instead").
+# Matches a Markdown table whose delimiter row has exactly two columns.
+extends: existence
+message: "This table has two columns. Use a definition list ('**Term** – Description') instead."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#build-accessible-tables
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^[ \t]*\|?[^|\n]+\|[^|\n]+\|?[ \t]*\n[ \t]*\|?[ \t]*:?-{3,}:?[ \t]*\|[ \t]*:?-{3,}:?[ \t]*\|?[ \t]*$'
+tests:
+  - name: fires
+    input: |
+      | Setting | Description |
+      |---|---|
+      | Timeout | The timeout in seconds. |
+    want: |
+      1:1:StyleGuide.TableTwoColumns:This table has two columns. Use a definition list ('**Term** – Description') instead.
+  - name: clean
+    input: |
+      | Setting | Default | Description |
+      |---|---|---|
+      | Timeout | 30 | The timeout in seconds. |
+    want: ""

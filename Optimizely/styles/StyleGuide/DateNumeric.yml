@@ -1,0 +1,25 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:424 "Dates must be fully written"
+#   ("Spell out dates completely (for example, 'July 30, 2021')").
+# Extends Std.DateTime.DateFormat's numeric shapes and adds ISO dates in prose.
+extends: existence
+message: "Spell out the date '%s' in full (for example, 'July 30, 2021')."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#dates-and-times
+level: error
+scope: text & ~frontmatter
+nonword: true
+tokens:
+  - '(?<![\w./-])\d{1,2}/\d{1,2}/(?:\d{4}|\d{2})(?![\w/-]|\.\d)'
+  - '(?<![\w./-])\d{1,2}\.\d{1,2}\.\d{4}(?![\w/-]|\.\d)'
+  - '(?<![\w./-])(?:19|20)\d{2}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])(?![\w/:-]|\.\d)'
+tests:
+  - name: fires
+    input: |
+      The release shipped on 07/30/2021 and the patch on 2021-08-02.
+    want: |
+      1:24:StyleGuide.DateNumeric:Spell out the date '07/30/2021' in full (for example, 'July 30, 2021').
+      1:52:StyleGuide.DateNumeric:Spell out the date '2021-08-02' in full (for example, 'July 30, 2021').
+  - name: clean
+    input: |
+      The release shipped on July 30, 2021. Install version 12.3.10.
+    want: ""

@@ -1,0 +1,21 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:494-496 "No question marks in headings (with exceptions)".
+# FAQ sections and checklists are exempt; Vale cannot tell them apart, so this is a warning.
+extends: existence
+message: "Avoid question marks in headings (FAQ sections and checklists are the exception)."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-headings
+level: warning
+scope: [heading, title]
+nonword: true
+tokens:
+  - '\?'
+tests:
+  - name: fires
+    input: |
+      ## What is a flag?
+    want: |
+      1:18:StyleGuide.HeadingQuestion:Avoid question marks in headings (FAQ sections and checklists are the exception).
+  - name: clean
+    input: |
+      ## Flags overview
+    want: ""

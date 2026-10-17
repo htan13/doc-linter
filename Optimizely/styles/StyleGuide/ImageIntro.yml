@@ -1,0 +1,28 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:835-837 "Image context and placement"
+#   ("Flag images that appear without any introductory or explanatory text").
+extends: existence
+message: "Add text before this image that explains what the reader is looking at and why it matters."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#add-images
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^#{2,6}[ \t][^\n]+\n(?:[ \t]*\n)*[ \t]*(?:!\[|<(?:img|Image)\b)'
+  - '\A(?:---\n(?:[^\n]*\n)*?---\n)?(?:[ \t]*\n)*[ \t]*(?:!\[|<(?:img|Image)\b)'
+tests:
+  - name: fires
+    input: |
+      ## Basic elements
+
+      ![Screenshot of the Forms panel where basic elements display](https://example.com/a.png)
+    want: |
+      1:1:StyleGuide.ImageIntro:Add text before this image that explains what the reader is looking at and why it matters.
+  - name: clean
+    input: |
+      ## Basic elements
+
+      The **Forms** panel lists the basic elements:
+
+      ![Screenshot of the Forms panel where basic elements display](https://example.com/a.png)
+    want: ""

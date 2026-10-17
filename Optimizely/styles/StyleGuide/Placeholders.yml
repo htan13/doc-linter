@@ -1,0 +1,30 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:485-490 "Placeholder text formatting"
+#   ("ALL_CAPS with underscores ... Do not wrap placeholder text in square brackets or other
+#   special characters". Bad: [project-id] or {projectId}. Good: PROJECT_ID).
+# scope: raw, because placeholders live in code. Matches bracketed or braced lowercase
+# placeholders, <your-...> and YOUR-HYPHENATED forms. Template syntax (${x}, {{x}}) is skipped.
+extends: existence
+message: "Write the placeholder '%s' in ALL_CAPS with underscores and no brackets (for example, PROJECT_ID)."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#format-code
+level: error
+scope: raw
+nonword: true
+tokens:
+  - '(?<![${\w])\{(?:your|my|project|account|site|api|app|env|environment|client|tenant|user|content|instance|sdk|flag|experiment|key|token|secret|id)[A-Za-z0-9_-]*\}(?!\})'
+  - '(?<=/)\{[a-z][A-Za-z0-9]*\}(?=[/?"''`\s]|$)'
+  - '(?<!:Link)\[(?:your|my|project|account|site|api|app|client|tenant|user|instance|sdk|insert|enter)[-_ ][a-z0-9 _-]+\](?![({])'
+  - '<(?:your|my|insert|enter)[-_ ][A-Za-z0-9 _-]+>'
+  - '\bYOUR-[A-Z0-9-]+\b'
+  - '(?<![#/\w-])(?:your|my)[-_](?:api|sdk|app|client|project|account|site|access|secret|private|public|auth|tenant|instance|environment|env)[-_][a-z0-9_-]+\b'
+tests:
+  - name: fires
+    input: |
+      Call `GET /projects/{projectId}/flags` with `<your-api-key>`.
+    want: |
+      1:21:StyleGuide.Placeholders:Write the placeholder '{projectId}' in ALL_CAPS with underscores and no brackets (for example, PROJECT_ID).
+      1:46:StyleGuide.Placeholders:Write the placeholder '<your-api-key>' in ALL_CAPS with underscores and no brackets (for example, PROJECT_ID).
+  - name: clean
+    input: |
+      Call `GET /projects/PROJECT_ID/flags` with `API_KEY`. In JavaScript, use `${projectId}`.
+    want: ""

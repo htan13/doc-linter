@@ -1,0 +1,34 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:388 "Correct vocabulary terms"
+#   ("URL, SKU, ID, SDK always uppercase (unless part of a code sample)").
+# Code spans and code blocks are not linted, so the code-sample exception holds.
+extends: substitution
+message: "Write '%s' in uppercase, not '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#word-list
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+action:
+  name: replace
+swap:
+  '(?<![-/.#\w])(?:url|Url)(?![-/.\w])': URL
+  '\b(?:urls|Urls|URLS)\b': URLs
+  '(?<![-/.#\w])(?:sku|Sku)(?![-/.\w])': SKU
+  '\b(?:skus|Skus|SKUS)\b': SKUs
+  '(?<![-/.#\w])(?:sdk|Sdk)(?![-/.\w])': SDK
+  '\b(?:sdks|Sdks|SDKS)\b': SDKs
+  '\bId\b': ID
+  '\b(?:Ids|IDS)\b': IDs
+  '(?<![-/.#\w])ids(?![-/.\w])': IDs
+tests:
+  - name: fires
+    input: |
+      Copy the url and the Sdk key. Enter the user Id.
+    want: |
+      1:10:StyleGuide.AcronymCase:Write 'URL' in uppercase, not 'url'.
+      1:22:StyleGuide.AcronymCase:Write 'SDK' in uppercase, not 'Sdk'.
+      1:46:StyleGuide.AcronymCase:Write 'ID' in uppercase, not 'Id'.
+  - name: clean
+    input: |
+      Copy the URL and the SDK key. Enter the user ID and the `id` parameter.
+    want: ""

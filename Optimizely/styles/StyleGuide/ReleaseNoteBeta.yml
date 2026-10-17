@@ -1,0 +1,22 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-rn-review/SKILL.md:126-127 ("Do not include beta features. If you must make an exception ...
+#   include 'Beta' in parentheses at the beginning of the release note sentence"). The exception makes it a warning.
+# Applies to release notes only (see templates/release-notes.vale.ini).
+extends: existence
+message: "Release notes do not include beta features. If this one is an exception, start the note with '(Beta)'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
+level: warning
+scope: sentence
+ignorecase: true
+tokens:
+  - '(?<!^\()\bbeta\b'
+tests:
+  - name: fires
+    input: |
+      Added SCIM provisioning, which is in beta.
+    want: |
+      1:38:StyleGuide.ReleaseNoteBeta:Release notes do not include beta features. If this one is an exception, start the note with '(Beta)'.
+  - name: clean
+    input: |
+      (Beta) Added System for Cross-domain Identity Management (SCIM) user provisioning through Okta.
+    want: ""

@@ -1,0 +1,167 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:242-247 "Sentence case for titles and headings".
+# Product names, acronyms, and technologies keep their own casing; they are listed in
+# exceptions here and in the Optimizely vocabulary (config/vocabularies/Optimizely/accept.txt).
+extends: capitalization
+message: "'%s' should use sentence case. Capitalize only the first word and proper nouns."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-headings
+level: error
+scope: [heading, title]
+match: $sentence
+indicators:
+  - ":"
+exceptions:
+  - Optimizely
+  - Opti ID
+  - Opal
+  - CMS
+  - PaaS
+  - SaaS
+  - Content Management System
+  - Optimizely Graph
+  - Graph
+  - Visual Builder
+  - Search & Navigation
+  - Optimizely Data Platform
+  - Data Platform
+  - Optimizely Connect Platform
+  - Content Marketing Platform
+  - Content Recommendations
+  - Product Recommendations
+  - Feature Experimentation
+  - Web Experimentation
+  - Performance Edge
+  - Personalization
+  - Analytics
+  - B2B Commerce Analytics
+  - Collaboration
+  - Commerce Connect
+  - Configured Commerce
+  - Commerce Mobile
+  - Stats Engine
+  - Optimizely Forms
+  - Forms
+  - Experimentation
+  - Agent
+  - Edge Agent
+  - Commerce
+  - Spire
+  - API
+  - APIs
+  - CLI
+  - AI
+  - B2B
+  - B2C
+  - URL
+  - URLs
+  - SKU
+  - SKUs
+  - ID
+  - IDs
+  - SDK
+  - SDKs
+  - REST
+  - SEO
+  - DAM
+  - DXP
+  - SSO
+  - SCIM
+  - SAML
+  - OAuth
+  - OIDC
+  - JSON
+  - XML
+  - YAML
+  - HTML
+  - CSS
+  - HTTP
+  - HTTPS
+  - CDN
+  - DNS
+  - UI
+  - CSP
+  - GDPR
+  - CCPA
+  - JavaScript
+  - TypeScript
+  - React
+  - Next.js
+  - Node.js
+  - Vue
+  - Angular
+  - Swift
+  - Kotlin
+  - Android
+  - iOS
+  - Java
+  - Python
+  - Ruby
+  - PHP
+  - Go
+  - Flutter
+  - C#
+  - .NET
+  - ASP.NET
+  - ASP.NET Core
+  - Razor
+  - Blazor
+  - GraphQL
+  - NuGet
+  - npm
+  - Dojo
+  - TinyMCE
+  - EPiServer
+  - Episerver
+  - Azure
+  - Microsoft
+  - Entra ID
+  - Okta
+  - Google
+  - Google Analytics
+  - Adobe
+  - Salesforce
+  - Shopify
+  - Snowflake
+  - BigQuery
+  - Databricks
+  - Redshift
+  - Amazon
+  - AWS
+  - Amazon S3
+  - S3
+  - Cloudflare
+  - Akamai
+  - Fastly
+  - Segment
+  - Slack
+  - Microsoft Teams
+  - Jira
+  - GitHub
+  - Windows
+  - Linux
+  - macOS
+  - Docker
+  - Kubernetes
+  - Postman
+  - Swagger
+  - OpenAPI
+  - SQL
+  - Liquid
+  - Markdown
+  - X-Forwarded-For
+  - X-Forwarded-Proto
+  - X-Forwarded-Host
+  - FAQ
+  - FAQs
+tests:
+  - name: fires
+    input: |
+      ## Configure The Payment Service Settings
+    want: |
+      1:4:StyleGuide.HeadingCase:'Configure The Payment Service Settings' should use sentence case. Capitalize only the first word and proper nouns.
+  - name: clean
+    input: |
+      ## Configure the payment service settings
+
+      ## Connect Optimizely Graph to Feature Experimentation
+    want: ""

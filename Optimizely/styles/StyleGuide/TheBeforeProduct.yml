@@ -1,0 +1,24 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:466-471 "Do not use 'the' before product names".
+# A product name that qualifies a following noun ("the Feature Experimentation SDK") is
+# not preceded by "the" as a product name, so the rule requires punctuation, a verb, a
+# preposition, or the end of the sentence after the name.
+extends: existence
+message: "Do not use 'the' before the product name in '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#product-names
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+tokens:
+  - '\b[Tt]he (?:Optimizely (?:CMS|Graph|Data Platform|Connect Platform|Forms|Opal|Analytics|Personalization|Collaboration|Web Experimentation|Feature Experimentation|Performance Edge|Commerce Connect|Configured Commerce|Content Marketing Platform|Search & Navigation)|Opti ID|Feature Experimentation|Web Experimentation|Performance Edge|Commerce Connect|Configured Commerce|Content Marketing Platform|Optimizely Data Platform|Optimizely Connect Platform|Search & Navigation|Content Recommendations|Product Recommendations|B2B Commerce Analytics|Commerce Mobile|Opal|CMS \((?:SaaS|PaaS)\)|Content Management System \((?:SaaS|PaaS)\)|CMS 1[123]|Optimizely)(?=[.,;:!?)]|\s*$|\s+(?:is|are|was|were|has|have|had|lets|let|provides|provide|supports|support|includes|include|offers|offer|uses|use|does|do|can|cannot|will|would|should|must|may|might|also|and|or|to|in|for|with|from|on|by|as|at|that|which|through|into|after|before|when|if|automatically|now)\b)'
+tests:
+  - name: fires
+    input: |
+      Go to the Optimizely CMS. The Feature Experimentation lets you test flags.
+    want: |
+      1:7:StyleGuide.TheBeforeProduct:Do not use 'the' before the product name in 'the Optimizely CMS'.
+      1:27:StyleGuide.TheBeforeProduct:Do not use 'the' before the product name in 'The Feature Experimentation'.
+  - name: clean
+    input: |
+      Go to Optimizely CMS. Install the Feature Experimentation SDK. Feature Experimentation lets you test flags.
+    want: ""

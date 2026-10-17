@@ -1,0 +1,20 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:733-739 "Possessive acronyms" (Bad: "CMS's configuration options").
+extends: existence
+message: "Rephrase to avoid the possessive acronym '%s', for example 'configuration options in CMS'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#abbreviations-and-symbols
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+nonword: true
+tokens:
+  - '\b[A-Z][A-Z0-9]+[’'']s\b'
+tests:
+  - name: fires
+    input: |
+      Review the CMS's configuration options.
+    want: |
+      1:12:StyleGuide.PossessiveAcronyms:Rephrase to avoid the possessive acronym 'CMS's', for example 'configuration options in CMS'.
+  - name: clean
+    input: |
+      Review the configuration options in CMS.
+    want: ""

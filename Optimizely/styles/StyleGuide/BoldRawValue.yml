@@ -1,0 +1,55 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:301-304 "Bold for UI elements only"
+#   ("Never bold a raw enum or constant value"; bold the display label, code-font the raw value).
+# Flags bold text shaped like a raw value: CamelCase with no space, snake_case, or SCREAMING_CASE.
+extends: existence
+message: "'%s' looks like a raw enum or constant value. Bold the display label (for example, **In Progress**) or use code font for the raw value (`InProgress`)."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#apply-formatting
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '\*\*(?:[A-Z][a-z]+(?:[A-Z][a-z0-9]+)+|[a-z]+(?:_[a-z0-9]+)+|[A-Z]+(?:_[A-Z0-9]+)+|[a-z]+(?:[A-Z][a-z0-9]+)+)\*\*'
+exceptions:
+  - GitHub
+  - JavaScript
+  - TypeScript
+  - GraphQL
+  - NuGet
+  - LinkedIn
+  - YouTube
+  - WordPress
+  - PowerShell
+  - SharePoint
+  - BigQuery
+  - DataDog
+  - PageSpeed
+  - OpenAPI
+  - PostgreSQL
+  - MySQL
+  - MongoDB
+  - DynamoDB
+  - CloudFront
+  - AppDynamics
+  - NewRelic
+  - HubSpot
+  - ContentGraph
+  - TinyMCE
+  - MailChimp
+  - SendGrid
+  - ServiceNow
+  - SalesForce
+  - DevOps
+  - IntelliJ
+  - VsCode
+  - WebStorm
+tests:
+  - name: fires
+    input: |
+      The job status changes to **InProgress**.
+    want: |
+      1:27:StyleGuide.BoldRawValue:'**InProgress**' looks like a raw enum or constant value. Bold the display label (for example, **In Progress**) or use code font for the raw value (`InProgress`).
+  - name: clean
+    input: |
+      The job status changes to **In Progress**. The raw value is `InProgress`. Open **GitHub**.
+    want: ""

@@ -1,0 +1,38 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:404 "Forbidden abbreviations and symbols"
+#   ("/" to separate options -> use "or"; do not use "and/or") and :742-747 "Forward slashes between options".
+# Fixed technical terms that contain a slash (A/B, CI/CD, TCP/IP, I/O, 24/7) are not
+# options and are excepted. Paths, URLs, and code belong in code font, where Vale does not look.
+extends: existence
+message: "Do not use '/' to separate options in '%s'. Use 'or' (and never 'and/or')."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#abbreviations-and-symbols
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+nonword: true
+tokens:
+  - '(?<![\w./:@~#-])[A-Za-z][\w-]*(?:/[A-Za-z][\w-]*)+(?![\w./:@#-])'
+exceptions:
+  - '^A/B$'
+  - '^A/A$'
+  - '^A/B/n$'
+  - '^A/B/C$'
+  - '^Pub/Sub$'
+  - '^CI/CD$'
+  - '^TCP/IP$'
+  - '^I/O$'
+  - '^UI/UX$'
+  - '^N/A$'
+  - '^n/a$'
+  - '^s/he$'
+  - '^he/she$'
+tests:
+  - name: fires
+    input: |
+      Select the HTML/CSS option. Enter a name and/or an ID.
+    want: |
+      1:12:StyleGuide.Slashes:Do not use '/' to separate options in 'HTML/CSS'. Use 'or' (and never 'and/or').
+      1:42:StyleGuide.Slashes:Do not use '/' to separate options in 'and/or'. Use 'or' (and never 'and/or').
+  - name: clean
+    input: |
+      Select the HTML or CSS option. Run an A/B test with CI/CD. Open https://example.com/path.
+    want: ""

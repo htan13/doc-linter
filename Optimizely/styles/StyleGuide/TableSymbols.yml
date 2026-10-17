@@ -1,0 +1,26 @@
+# Rung: Stated, conditional (StyleGuide/warning). Style Guide section ("subjective quality scoring").
+# Source: claude-skills skills/doc-style-guide/SKILL.md:218-220 "Accessible tables"
+#   ("Use descriptive words (such as 'Yes,' 'No,' 'Included') instead of ambiguous symbols like 'X'").
+extends: existence
+message: "Use a descriptive word (Yes, No, Included) instead of the symbol '%s' in a table cell."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#build-accessible-tables
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)(?<=\|)[ \t]*(?:[Xx✓✔✗✘✕✖☑☐●○•—–-]|:white_check_mark:|:x:|:heavy_check_mark:|&#10003;|&#10004;|&#10007;)[ \t]*(?=\|)'
+  - '<td[^>]*>\s*(?:[Xx✓✔✗✘✕✖☑☐●○•—–-]|&#10003;|&#10004;|&#10007;)\s*</td>'
+tests:
+  - name: fires
+    input: |
+      | Feature | Included |
+      |---|---|
+      | Flags | X |
+    want: |
+      3:10:StyleGuide.TableSymbols:Use a descriptive word (Yes, No, Included) instead of the symbol ' X ' in a table cell.
+  - name: clean
+    input: |
+      | Feature | Included |
+      |---|---|
+      | Flags | Yes |
+    want: ""

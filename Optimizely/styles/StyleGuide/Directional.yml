@@ -1,0 +1,27 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:661-669 "Directional language"
+#   (use "previous" instead of "above" and "following" instead of "below" inside an article).
+extends: substitution
+message: "Avoid directional language. Use %s instead of '%s', or name the element."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#ui-elements
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+action:
+  name: replace
+swap:
+  '\b(?:the )?above\b(?! (?:\d|zero|average|all|threshold|the threshold|a|or below|this))': the previous|previously
+  '\b(?:the )?below\b(?! (?:\d|zero|average|the threshold|a|this))': the following
+  '\bon the (?:left|right)\b': the named panel or field
+  '\bat the (?:top|bottom)\b': the named section or control
+tests:
+  - name: fires
+    input: |
+      As mentioned above, use the settings below.
+    want: |
+      1:14:StyleGuide.Directional:Avoid directional language. Use 'the previous' or 'previously' instead of 'above', or name the element.
+      1:38:StyleGuide.Directional:Avoid directional language. Use 'the following' instead of 'below', or name the element.
+  - name: clean
+    input: |
+      As mentioned in the previous section, use the following settings. Keep the value above 10.
+    want: ""

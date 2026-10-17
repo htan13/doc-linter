@@ -1,0 +1,22 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:333-338 "Do not use 'button' with button names".
+extends: existence
+message: "Refer to the button by its bold label only. Remove the word 'button' from '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#ui-elements
+level: error
+scope: raw
+ignorecase: true
+nonword: true
+tokens:
+  - '\*\*[^*\n]+\*\*\s+button\b'
+  - '\bthe\s+button\s+\*\*[^*\n]+\*\*'
+tests:
+  - name: fires
+    input: >
+      Click the **Save** button.
+    want: |
+      1:11:StyleGuide.ButtonWord:Refer to the button by its bold label only. Remove the word 'button' from '**Save** button'.
+  - name: clean
+    input: >
+      Click **Save**.
+    want: ""

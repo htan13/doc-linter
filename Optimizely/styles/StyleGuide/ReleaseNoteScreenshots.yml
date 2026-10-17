@@ -1,0 +1,23 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-rn-review/SKILL.md:118 ("Avoid screenshots unless they greatly enhance the customer's
+#   ability to consume the update"). The exception makes it a warning.
+# Applies to release notes only (see templates/release-notes.vale.ini).
+extends: existence
+message: "Avoid screenshots in release notes unless the release note is the only way to show the update."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '!\[[^\]\n]*\]\([^)\n]+\)'
+  - '<(?:img|Image)\b[^>]*>'
+tests:
+  - name: fires
+    input: |
+      ![Screenshot of the new editor where a block is selected](https://example.com/a.png)
+    want: |
+      1:1:StyleGuide.ReleaseNoteScreenshots:Avoid screenshots in release notes unless the release note is the only way to show the update.
+  - name: clean
+    input: |
+      - Added a block picker. See [Add blocks](https://example.com).
+    want: ""

@@ -1,0 +1,36 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:649-657 "Word replacements" and the
+#   Self-compliance checklist at :58 ("'When' not 'once,' 'because' not 'since,' 'go to' not 'navigate'").
+# "once" and "since" are flagged only in their conjunction sense; "once a day" and
+# "since version 12" (time) are excepted.
+extends: substitution
+message: "Use %s instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#word-list
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+action:
+  name: replace
+swap:
+  '\bonce\b(?! (?:a|an|per|every|each|more|again|only|or twice|daily|weekly|monthly|yearly|and for all|in a while|for each|before))(?=,? (?:the|a|an|you|your|it|they|this|that|these|those|all|each|every|[a-z]+(?:ed|s)\b))': when
+  '(?:^|(?<=[.!?] ))Once\b(?= (?:the|a|an|you|your|it|they|this|that|these|those|all|each|every|[a-z]+(?:ed|s)\b))': When
+  '\bsince\b(?! (?:version|v\d|release|the release|the update|the upgrade|then|\d|January|February|March|April|May|June|July|August|September|October|November|December|last|launch|its (?:launch|release|introduction)))(?=,? (?:the|a|an|you|your|it|they|this|that|these|those|there|we|[a-z]+ (?:is|are|was|were|has|have|does|do|can|cannot|will|must)))': because
+  '\bwish(?:es|ed)?\b': want
+  '\bwill be\b': is|are
+  '\bappears?\b': displays
+  '\bappeared\b': displayed
+  '\bnavigat(?:e|es|ed|ing)\b(?! (?:menu|bar|pane|panel|tree|links?|structure|items?))': go
+  '\bbrows(?:e|es|ed|ing) to\b': go to
+tests:
+  - name: fires
+    input: |
+      Once the job finishes, navigate to the report. Use a cache since it is faster. The page will be updated.
+    want: |
+      1:1:StyleGuide.WordReplacements:Use 'when' instead of 'Once'.
+      1:24:StyleGuide.WordReplacements:Use 'go' instead of 'navigate'.
+      1:60:StyleGuide.WordReplacements:Use 'because' instead of 'since'.
+      1:89:StyleGuide.WordReplacements:Use 'is' or 'are' instead of 'will be'.
+  - name: clean
+    input: |
+      When the job finishes, go to the report. Run the job once a day. The API has existed since version 12.
+    want: ""

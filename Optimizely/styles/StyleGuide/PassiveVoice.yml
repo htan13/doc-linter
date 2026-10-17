@@ -1,0 +1,19 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:617-622 "Active voice preferred" (passive is
+#   acceptable when the event has no agent, the event matters more than the agent, or to avoid blame).
+# Inherits Std.Grammar.PassiveVoice. Supersedes it (dimension: passive-voice).
+extends: Std.Grammar.PassiveVoice
+message: "'%s' looks like passive voice. Name who does the action, for example 'The system generates a token'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#voice-and-tone
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+tests:
+  - name: fires
+    input: |
+      The token is generated when the user logs in.
+    want: |
+      1:11:StyleGuide.PassiveVoice:'is generated' looks like passive voice. Name who does the action, for example 'The system generates a token'.
+  - name: clean
+    input: |
+      The system generates a token when the user logs in.
+    want: ""

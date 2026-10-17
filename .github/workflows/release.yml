@@ -1,0 +1,44 @@
+# Publishes the Optimizely Vale package. Every merge to main builds Optimizely.zip and
+# attaches it to a new release. Documentation repositories install it from
+# https://github.com/htan13/doc-linter/releases/latest/download/Optimizely.zip
+name: Release package
+on:
+  push:
+    branches: [main]
+  # Optional: rebuild the latest release without a new merge.
+  workflow_dispatch:
+# Grants the workflow's GITHUB_TOKEN write access to repository contents, which
+# `gh release create` needs. This overrides the repository's default workflow
+# permissions, so the Actions settings can stay read-only.
+permissions:
+  contents: write
+# Publish one release at a time, in merge order, so the newest merge is always
+# the release marked latest.
+concurrency:
+  group: release-package
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      VALE_VERSION: 3.23.0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Vale
+        run: |
+          curl -sSfL "https://github.com/errata-ai/vale/releases/download/v${VALE_VERSION}/vale_${VALE_VERSION}_Linux_64-bit.tar.gz" | tar -xz -C /usr/local/bin vale
+      - name: Run the rule tests
+        run: tests/run.sh
+      - name: Build Optimizely.zip
+        # The archive must contain a top-level Optimizely/ directory; Vale names the
+        # package after the archive and looks for Optimizely/styles and Optimizely/.vale.ini.
+        run: zip -r Optimizely.zip Optimizely -x "*/.DS_Store"
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="v$(date -u +%Y.%m.%d)-${GITHUB_RUN_NUMBER}"
+          gh release create "$tag" Optimizely.zip \
+            --title "Optimizely Vale package $tag" \
+            --notes "Built from ${GITHUB_SHA}. See STYLE_GUIDE.md and RULES.md for the rules." \
+            --latest

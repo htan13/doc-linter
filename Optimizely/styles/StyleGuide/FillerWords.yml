@@ -1,0 +1,35 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:685-687 "Filler adjectives and adverbs"
+#   ("good," "excellent," "great," "very," "quite," "really").
+extends: existence
+message: "Remove the filler word '%s', or replace it with a specific detail."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#concise-writing
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+tokens:
+  - good
+  - excellent
+  - great
+  - very
+  - quite
+  - really
+  - extremely
+  - awesome
+  - amazing
+  - fantastic
+  - incredibly
+exceptions:
+  - Really Simple Syndication
+  - good standing
+tests:
+  - name: fires
+    input: |
+      This is a very good way to cache pages.
+    want: |
+      1:11:StyleGuide.FillerWords:Remove the filler word 'very', or replace it with a specific detail.
+      1:16:StyleGuide.FillerWords:Remove the filler word 'good', or replace it with a specific detail.
+  - name: clean
+    input: |
+      This method caches pages for 30 minutes.
+    want: ""

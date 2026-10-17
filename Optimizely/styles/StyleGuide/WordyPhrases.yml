@@ -1,0 +1,35 @@
+# Rung: Stated, conditional (StyleGuide/warning)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:632-645 "Wordy phrases detected" and the
+#   Self-compliance checklist at :56.
+extends: substitution
+message: "Use %s instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#concise-writing
+level: warning
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+action:
+  name: replace
+swap:
+  '\ballows? you to\b': lets you|let you
+  '\bas soon as\b': when
+  '\bas well as\b': and
+  '\bhas been\b': is|was
+  '\bhave been\b': are|were
+  '\bmore information\b': information
+  '\bin order to\b': to
+  '\bit is possible to\b': you can
+  '\bit is possible\b': you can
+  '\bwill be able to\b': can
+  '\bwill be happy to\b': can
+tests:
+  - name: fires
+    input: |
+      In order to sync, the plugin allows you to set a schedule as well as a timeout.
+    want: |
+      1:1:StyleGuide.WordyPhrases:Use 'to' instead of 'In order to'.
+      1:30:StyleGuide.WordyPhrases:Use 'lets you' or 'let you' instead of 'allows you to'.
+      1:59:StyleGuide.WordyPhrases:Use 'and' instead of 'as well as'.
+  - name: clean
+    input: |
+      To sync, the plugin lets you set a schedule and a timeout.
+    want: ""

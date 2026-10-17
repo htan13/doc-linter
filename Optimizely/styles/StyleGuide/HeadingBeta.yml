@@ -1,0 +1,20 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:521-523 "No 'beta' in titles or headings".
+extends: existence
+message: "Do not put '%s' in a title or heading. Use the beta callout at the top of the article or section."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#write-headings
+level: error
+scope: [heading, title]
+ignorecase: true
+tokens:
+  - beta
+tests:
+  - name: fires
+    input: |
+      ## Visual Builder (beta)
+    want: |
+      1:20:StyleGuide.HeadingBeta:Do not put 'beta' in a title or heading. Use the beta callout at the top of the article or section.
+  - name: clean
+    input: |
+      ## Visual Builder
+    want: ""

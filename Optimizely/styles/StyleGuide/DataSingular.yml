@@ -1,0 +1,26 @@
+# Rung: Stated, unconditional (StyleGuide/error)
+# Source: claude-skills skills/doc-style-guide/SKILL.md:387 "Correct vocabulary terms"
+#   ("data" as a singular mass noun: "the data is stored," not "the data are stored").
+extends: substitution
+message: "Treat 'data' as singular. Use '%s' instead of '%s'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#word-list
+level: error
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: true
+action:
+  name: replace
+swap:
+  '\bdata are\b': data is
+  '\bdata were\b': data was
+  '\bdata have\b': data has
+  '\bthese data\b': this data
+tests:
+  - name: fires
+    input: |
+      The data are stored in the warehouse.
+    want: |
+      1:5:StyleGuide.DataSingular:Treat 'data' as singular. Use 'data is' instead of 'data are'.
+  - name: clean
+    input: |
+      The data is stored in the warehouse.
+    want: ""

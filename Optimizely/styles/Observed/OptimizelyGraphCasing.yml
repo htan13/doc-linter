@@ -1,0 +1,21 @@
+# Rung: Observed (Observed/suggestion). Enabled only in episerver/cms-saas-docs.
+# Source: collection_analyses/episerver_cms_saas_docs_5a8b7101/style-observations.md (Promptless Knowledge Base).
+#   "Optimizely Graph" is capitalized on 43 of 43 sampled pages where it appears.
+extends: existence
+message: "Observed convention (43 of 43 sampled pages): capitalize 'Optimizely Graph'."
+level: suggestion
+vocab: false
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+tokens:
+  - '(?:optimizely graph|Optimizely graph|optimizely Graph)'
+tests:
+  - name: fires
+    input: |
+      Sync content to Optimizely graph.
+    want: |
+      1:17:Observed.OptimizelyGraphCasing:Observed convention (43 of 43 sampled pages): capitalize 'Optimizely Graph'.
+  - name: clean
+    input: |
+      Sync content to Optimizely Graph.
+    want: ""

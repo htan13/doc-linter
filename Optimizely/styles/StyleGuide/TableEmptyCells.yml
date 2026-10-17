@@ -1,0 +1,24 @@
+# Rung: Stated, conditional (StyleGuide/warning). Style Guide section ("subjective quality scoring").
+# Source: claude-skills skills/doc-style-guide/SKILL.md:220 "Accessible tables" ("Do not leave cells empty or null").
+extends: existence
+message: "Do not leave a table cell empty or null. Enter a value such as 'None' or 'Not applicable'."
+link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#build-accessible-tables
+level: warning
+scope: raw
+nonword: true
+tokens:
+  - '(?m)^[ \t]*\|(?:[^|\n]*\|)*?[ \t]*(?:null|NULL)?[ \t]*\|'
+tests:
+  - name: fires
+    input: |
+      | Setting | Default |
+      |---|---|
+      | Timeout |  |
+    want: |
+      3:1:StyleGuide.TableEmptyCells:Do not leave a table cell empty or null. Enter a value such as 'None' or 'Not applicable'.
+  - name: clean
+    input: |
+      | Setting | Default |
+      |---|---|
+      | Timeout | None |
+    want: ""

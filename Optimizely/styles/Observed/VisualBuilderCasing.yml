@@ -1,0 +1,21 @@
+# Rung: Observed (Observed/suggestion). Enabled only in episerver/cms-saas-docs.
+# Source: collection_analyses/episerver_cms_saas_docs_5a8b7101/style-observations.md (Promptless Knowledge Base).
+#   "Visual Builder" is capitalized on 38 of 38 sampled pages where it appears.
+extends: existence
+message: "Observed convention (38 of 38 sampled pages): capitalize 'Visual Builder'."
+level: suggestion
+vocab: false
+scope: text & ~frontmatter.slug & ~frontmatter.createdAt & ~frontmatter.docTags
+ignorecase: false
+tokens:
+  - '(?:visual builder|Visual builder|visual Builder)'
+tests:
+  - name: fires
+    input: |
+      Open the visual builder.
+    want: |
+      1:10:Observed.VisualBuilderCasing:Observed convention (38 of 38 sampled pages): capitalize 'Visual Builder'.
+  - name: clean
+    input: |
+      Open Visual Builder.
+    want: ""

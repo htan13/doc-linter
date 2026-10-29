@@ -2,6 +2,10 @@
 # Source: claude-skills skills/doc-rn-review/SKILL.md:138 ("Do not include a link to documentation" in a bug-fix note) and check B3.
 # Applies to release notes only. The package .vale.ini turns the ReleaseNote* rules off, and each
 # *-release-notes repository turns them back on (see templates/release-notes.vale.ini).
+# The optional prefix accepts the issue key as plain text "(KEY)", a Markdown link "[KEY](url)", or
+# an Archbee link ":Link[KEY]{...}", followed by an en dash, em dash, bold dash, or no dash. The
+# link on the key itself points to the bug list, so only a link after "Fixed" raises an alert. A link
+# to another issue on the Optimizely bug list is a cross-reference, not documentation, and raises none.
 extends: existence
 message: "Do not link to documentation from a bug-fix note. If the fix changes documented behavior, write it as an enhancement."
 link: https://github.com/htan13/doc-linter/blob/main/STYLE_GUIDE.md#release-notes
@@ -9,14 +13,27 @@ level: error
 scope: raw
 nonword: true
 tokens:
-  - '(?m)^[ \t]*(?:[-*][ \t]+)?(?:\([A-Z][A-Z0-9]+-\d+\)[ \t]+–[ \t]+)?Fixed\b[^\n]*?(?:\]\(|:Link\[)'
+  - '(?m)^[ \t]*(?:[-*][ \t]+)?(?:(?:\([A-Z][A-Z0-9]+-\d+\)|\[[A-Z][A-Z0-9]+-\d+\]\([^)\s]*\)|:Link\[[A-Z][A-Z0-9]+-\d+\]\{[^}\n]*\})(?:[ \t\u00A0]*(?:\*\*)?[–—](?:\*\*)?)?[ \t\u00A0]+)?Fixed\b[^\n]*?(?:\]\((?!https?://world\.optimizely\.com/support/(?i:bug-list)/)|:Link\[(?![A-Z][A-Z0-9]+-\d+\]\{href="https?://world\.optimizely\.com/support/(?i:bug-list)/))'
 tests:
   - name: fires
     input: |
       - Fixed the issue where sorting ignored first names. See [Manage users](https://example.com).
     want: |
       1:1:StyleGuide.ReleaseNoteFixLink:Do not link to documentation from a bug-fix note. If the fix changes documented behavior, write it as an enhancement.
+  - name: fires after a linked issue key
+    input: |
+      - [CMS-1234](https://world.optimizely.com/support/bug-list/bug/CMS-1234) – Fixed the issue where sorting ignored first names. See [Manage users](https://example.com).
+      - :Link[FIND-1234]{href="https://world.optimizely.com/support/bug-list/bug/FIND-1234" newTab="true"} – Fixed the issue where the :Link[content indexing job]{label="Index" docId="abc"} stopped.
+      - (CMS-1234) – Fixed the issue where sorting ignored first names. See [Manage users](https://example.com).
+    want: |
+      1:1:StyleGuide.ReleaseNoteFixLink:Do not link to documentation from a bug-fix note. If the fix changes documented behavior, write it as an enhancement.
+      2:1:StyleGuide.ReleaseNoteFixLink:Do not link to documentation from a bug-fix note. If the fix changes documented behavior, write it as an enhancement.
+      3:1:StyleGuide.ReleaseNoteFixLink:Do not link to documentation from a bug-fix note. If the fix changes documented behavior, write it as an enhancement.
   - name: clean
     input: |
       - Fixed the issue where sorting ignored first names.
+      - [CMS-1234](https://world.optimizely.com/support/bug-list/bug/CMS-1234) – Fixed the issue where sorting ignored first names.
+      - :Link[FIND-1234]{href="https://world.optimizely.com/support/bug-list/bug/FIND-1234" newTab="true"} – Fixed the issue where the indexing job stopped.
+      - :Link[CMS-2345]{href="https://world.optimizely.com/support/bug-list/bug/CMS-2345" newTab="true"} – Fixed the issue where values that the :Link[CMS-1234]{href="https://world.optimizely.com/support/bug-list/bug/CMS-1234" newTab="true"} issue deleted stayed empty.
+      - [CMS-2345](https://world.optimizely.com/support/Bug-list/bug/CMS-2345) – Fixed the issue where values that the [CMS-1234](https://world.optimizely.com/support/Bug-list/bug/CMS-1234) issue deleted stayed empty.
     want: ""
